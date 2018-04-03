@@ -11,7 +11,8 @@ while True:
         subject_name = input("Enter the subject name:")
         subject_score = int(input("Enter the subject score:"))
         if student_name in info:
-            info[student_name][subject_name]=subject_score
+            info[student_name]['subject name'].append(subject_name)
+            info[student_name]['subject score'].append(subject_score)
         else:
             info[student_name] = {'subject name': [subject_name], 'subject score': [subject_score]}
 
