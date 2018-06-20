@@ -1,18 +1,9 @@
-## bank account
-
-## A bank account has a balance that can be changed by deposits and withdrawals
 
 class BankAccount:
-
     def __init__(self, initialBalance = 0.0):
         self._balance = initialBalance
-
-    ## Deposits money into this account
-
-    def deposit(self, amount):
+    def deposit(self,amount):
         self._balance = self._balance + amount
-
-    ## Makes a withdrawal from this account, or charges a
     def withdraw(self, amount):
         PENALTY = 10.0
         if amount > self._balance:
@@ -22,13 +13,12 @@ class BankAccount:
     def addInterest(self, rate):
         amount = self._balance * rate / 100.0
         self._balance = self._balance + amount
-
     def getBalance(self):
         return self._balance
 
-harrysAccount = BankAccount(1000.0)
-harrysAccount.deposit(500.0)
-harrysAccount.withdraw(2000.0)
-harrysAccount.addInterest(1.0)
+harrysAccount = BankAccount(1000)
+harrysAccount.deposit(500.0) # Balance is now $1500
+harrysAccount.withdraw(2000.0) # Balance is now $1490
+harrysAccount.addInterest(1.0) # Balance is now $1490 + 14.90
 print("%.2f" % harrysAccount.getBalance())
 print("Expected: 1504.90")
