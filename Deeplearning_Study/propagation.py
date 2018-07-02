@@ -25,6 +25,7 @@ def feed_forward(model, x):
     return z1, a1, z2, output
 
 def backprop(x,y,model,z1,a1,z2,output):
+    # using delta rule (gradient)
     delta3 = output
     delta3 = delta3 - y
     dw2 = (a1.T).dot(delta3)
