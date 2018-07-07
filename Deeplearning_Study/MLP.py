@@ -14,7 +14,7 @@ class NN(object):
 
         # first term corresponds to layer 0 )input layer).
         # No weights enter the input layer and hence self.weights[0] is redundant
-        self.weights = [np.array([0])] + [np.random.randn(y,x) for y, x in zip(sizes[1:], sizes[:-1])]
+        self.weights = [np.array([0])] + [np.random.randn(y,x) for y, x in list(zip(sizes[1:], sizes[:-1]))]
         # input layer does not have any biases. self.biases[0] is redundant.
         self.biases = [np.random.randn(y,1) for y in sizes]
         # Input layer has no weights, biases associated. Hence z=wx+b is not defined for input layer.
@@ -48,8 +48,8 @@ class NN(object):
                 for x,y in mini_batch:
                     self._forward_prop(x)
                     delta_bb_b, delta_ww_w = self._back_prop(x,y)
-                    bb = [nb + dnb for nb, dnb in zip(bb, delta_bb_b)]
-                    ww = [nw + dnw for nw, dnw in zip(ww, delta_ww_w)]
+                    bb = [nb + dnb for nb, dnb in list(zip(bb, delta_bb_b))]
+                    ww = [nw + dnw for nw, dnw in list(zip(ww, delta_ww_w))]
                 self.weights = [
                     w - (self.eta / self.mini_batch_size) * dw for w, dw in
                     zip(self.weights, bb)]
