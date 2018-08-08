@@ -27,17 +27,37 @@ class RNN():
             o[t] = self.softmax(self.V.dot(h[t]))
         return [o, h]
 
-    def loss(self, x, y):
-        pass
-
-    def bptt(self, x, y):
-        pass
-
-    def SGD(self, x, y, learning_rate):
-        pass
-
-    def train(self, x_train, y_train, learning_rate = 0.05, nepoch=100, eval_loss=5):
-        pass
+    # def total_loss(self, x, y):
+    #     L = 0
+    #     for i in np.arange(len(y)):
+    #         o, h = self.propagation(x[i])
+    #         correct_pred = o[np.arange(len(y[i])), y[i]]
+    #         L += -1 * np.sum(np.log(correct_pred))
+    #     return L
+    #
+    # def bptt(self, x, y):
+    #     T = len(y)
+    #     o, h = self.propagation(x)
+    #     dLdU = np.zeros(self.U.shape)
+    #     dLdV = np.zeros(self.V.shape)
+    #     dLdW = np.zeros(self.W.shape)
+    #     delta_o = o
+    #     delta_o[np.arange(len(y)), y] -= 1
+    #     for t in np.arange(T)[::-1]:
+    #         dLdV += np.outer(delta_o[t], h[t].T)
+    #         delta_t = self.V.T.dot(delta_o[t]) * (1-(h[t] ** 2))
+    #         # Backpropagation through time
+    #         for bptt_step in np.arange(max(0, t-self.bptt), t+1)[::-1]:
+    #             dLdW += np.outer(delta_t, h[bptt_step-1])
+    #             dLdU[:, x[bptt_step]] += delta_t
+    #             delta_t = self.W.T.dot(delta_t) * (1-h[bptt_step-1] ** 2)
+    #         return [dLdU, dLdV, dLdW]
+    #
+    # def SGD(self, x, y, learning_rate):
+    #     dLdU, dLdV, dLdW = self.bptt(x, y)
+    #     self.U -= learning_rate * dLdU
+    #     self.V -= learning_rate * dLdV
+    #     self.W -= learning_rate * dLdW
 
 
 import pandas as pd
@@ -55,5 +75,21 @@ y_data = np.roll(Stock['Close'][:].tolist(),-1)[:-1] # 다음날 종가로 데�
 
 RNN = RNN()
 o, h = RNN.propagation(x_data)
-print(o.shape)
-print(o)
+
+
+# def train(model, x_train, y_train, learning_rate=0.05, nepoch=100, eval_loss=5):
+#     losses = []
+#     num = 0
+#     for epoch in range(nepoch):
+#         if (epoch % eval_loss == 0):
+#             loss = model.total_loss(x_train, y_train)
+#             losses.append((num, loss))
+#             print("Loss after num=%d epoch=%d: %f" % (num, epoch, loss))
+#         for i in range(len(y_train)):
+#             model.SGD(x_train[i], y_train[i], learning_rate)
+#             num += 1
+#
+# np.random.seed(10)
+# model = RNN()
+# losses = train(model, x_data, y_data, nepoch=10, eval_loss=1)
+
