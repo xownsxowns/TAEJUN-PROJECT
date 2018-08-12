@@ -38,7 +38,7 @@ x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
 print(x_train.shape)
 print(x_test.shape)
 
-autoencoder.fit(x_train, x_train, epochs=50, batch_size=256, shuffle=True, validation_data=(x_test,x_test))
+autoencoder.fit(x_train, x_train, epochs=1000, batch_size=256, shuffle=True, validation_data=(x_test,x_test))
 
 # encode and decode some digits
 # note that we take them from the *test* set
@@ -56,5 +56,12 @@ for i in range(n):
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
+
+    ax = plt.subplot(2, n, i+1+n)
+    plt.imshow(decoded_imgs[i].reshape(28,28))
+    plt.gray()
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
 plt.show()
 
+# loss가 어느정도 떨어지다가 학습이 안됨
