@@ -4,17 +4,10 @@ import tensorflow as tf
 from functools import partial
 import sys
 import os
+
 plt.rcParams['axes.labelsize'] = 14
 plt.rcParams['xtick.labelsize'] = 12
 plt.rcParams['ytick.labelsize'] = 12
-
-# 한글출력
-plt.rcParams['font.family'] = 'NanumBarunGothic'
-plt.rcParams['axes.unicode_minus'] = False
-
-# 그림을 저장할 폴더
-PROJECT_ROOT_DIR = "."
-CHAPTER_ID = "autoencoders"
 
 def shuffle_batch(X, y, batch_size):
     rnd_idx = np.random.permutation(len(X))
@@ -68,7 +61,7 @@ training_op = optimizer.minimize(loss)
 
 init = tf.global_variables_initializer()
 saver = tf.train.Saver()
-n_epochs = 5
+n_epochs = 10
 batch_size = 150
 
 with tf.Session() as sess:
@@ -82,20 +75,11 @@ with tf.Session() as sess:
             sess.run(training_op, feed_dict={X: X_batch})
         loss_train = reconstruction_loss.eval(feed_dict={X: X_batch})
         print("\r{}".format(epoch), "훈련 MSE:", loss_train)
-        saver.save(sess, "./my_model_all_layers.ckpt")
-
-def show_reconstructed_digits(X, outputs, model_path = None, n_test_digits = 2):
-    with tf.Session() as sess:
-        if model_path:
-            saver.restore(sess, model_path)
-#         X_test = mnist.test.images[:n_test_digits]
-        outputs_val = outputs.eval(feed_dict={X: X_test[:n_test_digits]})
-
-    fig = plt.figure(figsize=(8, 3 * n_test_digits))
-    for digit_index in range(n_test_digits):
-        plt.subplot(n_test_digits, 2, digit_index * 2 + 1)
+    outputs_val = outputs.eval(feed_dict={X: X_test[:2]})
+    fig = plt.figure(figsize=(8, 3 * 2))
+    for digit_index in range(2):
+        plt.subplot(2, 2, digit_index * 2 + 1)
         plot_image(X_test[digit_index])
-        plt.subplot(n_test_digits, 2, digit_index * 2 + 2)
+        plt.subplot(2, 2, digit_index * 2 + 2)
         plot_image(outputs_val[digit_index])
-
-show_reconstructed_digits(X, outputs, "./my_model_all_layers.ckpt")
+    plt.show()
