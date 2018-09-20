@@ -49,7 +49,8 @@ if __name__ =='__main__':
     mnist = input_data.read_data_sets('/tmp/tensorflow/mnist/input_data', one_hot=True)
     np.random.seed(777)
     NN = NN()
-    for _ in range(1000):
+    loss_fun = []
+    for _ in range(500):
         batch_xs, batch_ys = mnist.train.next_batch(100)
         y1, y2 = NN.forward_propa(batch_xs)
         dw1, dw2 = NN.back_propa(batch_xs,batch_xs,y1,y2)
@@ -59,6 +60,12 @@ if __name__ =='__main__':
         accuracy = np.mean(correct)
         loss = NN.cross_entropy(y2, mnist.test.images)
         print('{0} accuracy: {1}'.format(_, accuracy))
+        loss_fun.append(loss)
+
+    plt.plot(loss_fun)
+    plt.ylabel('loss')
+    plt.xlabel('iteration')
+    plt.show()
 
 
 

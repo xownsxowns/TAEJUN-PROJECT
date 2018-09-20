@@ -28,6 +28,4 @@ class neural_network(object):
 
 NN = neural_network()
 output = NN.forward(x)
-
-
-
+print(output)

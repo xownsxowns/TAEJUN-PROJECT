@@ -6,3 +6,4 @@ visual = mne.viz.plot_raw(data)
 
 
 print(visual)
+print(data)
