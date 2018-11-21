@@ -1,5 +1,6 @@
 import pandas as pd
-import konlpy
+from konlpy.tag import Kkma
+
 
 data = pd.read_csv('[3]PROJECT/Personal project/polarity.csv')
-data['ngram']
+kkma = Kkma()
