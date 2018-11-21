@@ -82,25 +82,25 @@ def comment_threads_list_by_video_id(service, **kwargs):
 
 rawdata = comment_threads_list_by_video_id(service, part='snippet,replies', videoId='cCru-rXbBjs')
 
-data = []
-for item in rawdata['items']:
-    parents = {}
-    itemP = item['snippet']['topLevelComment']
-    parents['id'] = itemP['id']
-    parents['author'] = itemP['snippet']['authorDisplayName']
-    parents['time'] = itemP['snippet']['updatedAt']
-    parents['text'] = itemP['snippet']['textDisplay']
-    subdata = []
-    if not 'replies' in item.keys():
-        continue
-    for comment in item['replies']['comments']:
-        children = {}
-        children['id'] = comment['id']
-        children['author'] = comment['snippet']['authorDisplayName']
-        children['time'] = comment['snippet']['updatedAt']
-        children['text'] = comment['snippet']['textDisplay']
-        subdata.append(children)
-        parents['comments'] = subdata
-        data.append(parents)
+# data = []
+# for item in rawdata['items']:
+#     parents = {}
+#     itemP = item['snippet']['topLevelComment']
+#     parents['id'] = itemP['id']
+#     parents['author'] = itemP['snippet']['authorDisplayName']
+#     parents['time'] = itemP['snippet']['updatedAt']
+#     parents['text'] = itemP['snippet']['textDisplay']
+#     subdata = []
+#     if not 'replies' in item.keys():
+#         continue
+#     for comment in item['replies']['comments']:
+#         children = {}
+#         children['id'] = comment['id']
+#         children['author'] = comment['snippet']['authorDisplayName']
+#         children['time'] = comment['snippet']['updatedAt']
+#         children['text'] = comment['snippet']['textDisplay']
+#         subdata.append(children)
+#         parents['comments'] = subdata
+#         data.append(parents)
 
-print(rawdata['items'])
+print(rawdata)
