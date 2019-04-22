@@ -34,10 +34,11 @@ total_acc = list()
 
 for isub in range(60):
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
-    nlen = np.shape(data['ERP'])[1]
+    nlen = 200
     ntrain = np.shape(data['ERP'])[3]
 
     tar_data = list()
@@ -46,7 +47,7 @@ for isub in range(60):
     nontar_label = list()
 
     for i in range(ntrain):
-        target = data['ERP'][:,:,data['target'][i][0]-1,i]
+        target = data['ERP'][:,200:,data['target'][i][0]-1,i]
         tar_data.append(target)
         tar_label.append(1)
 
@@ -54,7 +55,7 @@ for isub in range(60):
             if j == (data['target'][i][0]-1):
                 continue
             else:
-                nontar_data.append(data['ERP'][:,:,j,i])
+                nontar_data.append(data['ERP'][:,200:,j,i])
                 nontar_label.append(0)
 
     tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
@@ -80,21 +81,22 @@ for isub in range(60):
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
 
     for i in range(ntest):
-        test = data2['ERP'][:,:,:,i]
+        test = data2['ERP'][:,200:,:,i]
         total_prob = list()
         for j in range(4):
-            test_data = test[:,:,j]
+            test_data = test[:,200:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
             prob = model.predict_proba(test_data)
             total_prob.append(prob[0][0])
-        predictedㅓㅕ_label = np.argmax(total_prob)
+        predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
             corr_ans += 1
 
