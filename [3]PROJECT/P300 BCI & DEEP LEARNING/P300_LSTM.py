@@ -28,7 +28,9 @@ import random
 from keras import optimizers
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, LSTM, Conv2D, MaxPooling2D
+from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 total_acc = list()
 
@@ -61,23 +63,26 @@ for isub in range(60):
     tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
     nontar_data = np.reshape(nontar_data,((ntrain*3),nlen,nch))
 
-    train_data = np.concatenate((tar_data, nontar_data))
-    train_label = np.concatenate((tar_label, nontar_label))
+    train_vali_data = np.concatenate((tar_data, nontar_data))
+    train_vali_label = np.concatenate((tar_label, nontar_label))
+
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
 
     ## standardScaler 해줘보자
     scalers = {}
     for i in range(train_data.shape[1]):
         scalers[i] = StandardScaler()
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
+        vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
     model = Sequential()
     model.add(LSTM(20, input_shape=(nlen, nch), activation='relu'))
     model.add(Dropout(0.25))
-    model.add(Dense(10, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     # print(model.summary())
-    model.fit(train_data, train_label, epochs=100, batch_size=20)
+    early_stopping = EarlyStopping(patience=10)
+    model.fit(train_data, train_label, epochs=200, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -90,7 +95,7 @@ for isub in range(60):
         test = data2['ERP'][:,200:,:,i]
         total_prob = list()
         for j in range(4):
-            test_data = test[:,200:,j]
+            test_data = test[:,:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
