@@ -46,7 +46,7 @@ while True:
     # grab the frame from the threaded video stream and resize it
     # to have a maximum width of 400 pixels
     frame = vs.read()
-    frame = imutils.resize(frame, width=400)
+    frame = imutils.resize(frame, width=600)
 
     # grab the frame dimensions and convert it to a blob
     (h, w) = frame.shape[:2]
@@ -62,7 +62,7 @@ while True:
     # loop over the detections
     for i in np.arange(0, detections.shape[2]):
         confidence = detections[0,0,i,2]
-        if confidence > .5:
+        if confidence > .6:
             # class_id = detection[1]
             class_id = int(detections[0,0,i,1])
             class_name = id_class_name(class_id, classNames)
