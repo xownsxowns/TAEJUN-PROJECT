@@ -1,6 +1,6 @@
 ## MNE
 import mne
-import scipy import io
+from scipy import io
 
 # data = mne.io.read_raw_edf('C:/Users/jhpark/Documents/GitHub/Python_project/[2]STUDY/EEG/sub1_1_filtered.edf')
 # visual = mne.viz.plot_raw(data)
