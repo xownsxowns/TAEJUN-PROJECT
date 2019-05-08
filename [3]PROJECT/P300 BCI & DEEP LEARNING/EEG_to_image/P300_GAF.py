@@ -17,6 +17,7 @@ tar_label = list()
 nontar_data = list()
 nontar_label = list()
 
+# 200ms~600ms 길이 자른것
 for i in range(ntrain):
     target = data['ERP'][:, 200:, data['target'][i][0] - 1, i]
     tar_data.append(target)
@@ -33,10 +34,10 @@ tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
 nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
 # Transform the time series into Gramian Angular Fields
-gasf = GramianAngularField(image_size=10, method='summation')
+gasf = GramianAngularField(image_size=200, method='summation')
 X_gasf = gasf.fit_transform(tar_data[:,:,0])
-gadf = GramianAngularField(image_size=10, method='difference')
-X_gadf = gadf.fit_transform(tar_data[:,:,0])
+# gadf = GramianAngularField(image_size=10, method='difference')
+# X_gadf = gadf.fit_transform(tar_data[:,:,0])
 
 # images = [X_gasf[0], X_gadf[0]]
 images = [X_gasf[0]]
