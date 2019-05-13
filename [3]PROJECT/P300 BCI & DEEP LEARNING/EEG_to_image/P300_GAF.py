@@ -34,15 +34,15 @@ tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
 nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
 # Transform the time series into Gramian Angular Fields
-gasf = GramianAngularField(image_size=200, method='summation')
+# image_size -> Shape of output
+gasf = GramianAngularField(image_size=0.1, method='summation')
 X_gasf = gasf.fit_transform(tar_data[:,:,0])
 # gadf = GramianAngularField(image_size=10, method='difference')
 # X_gadf = gadf.fit_transform(tar_data[:,:,0])
 
 # images = [X_gasf[0], X_gadf[0]]
 images = [X_gasf[0]]
-titles = ['Gramian Angular Summation Field',
-          'Gramian Angular Difference Field']
+titles = ['Gramian Angular Summation Field']
 
 height = np.shape(images)[1]
 width = np.shape(images)[2]

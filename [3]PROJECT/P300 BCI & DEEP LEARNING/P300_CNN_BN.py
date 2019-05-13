@@ -77,10 +77,10 @@ for isub in range(60):
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
     model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=3 , input_shape=(nlen, nch)))
+    model.add(Conv1D(filters=64, kernel_size=10 , input_shape=(nlen, nch)))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Conv1D(filters=64, kernel_size=3))
+    model.add(Conv1D(filters=64, kernel_size=10))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))

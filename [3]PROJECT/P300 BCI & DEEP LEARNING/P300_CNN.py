@@ -77,8 +77,8 @@ for isub in range(60):
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
     model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=3 , input_shape=(nlen, nch), activation='relu'))
-    model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+    model.add(Conv1D(filters=64, kernel_size=10 , input_shape=(nlen, nch), activation='relu'))
+    model.add(Conv1D(filters=64, kernel_size=10, activation='relu'))
     model.add(Dropout(0.5))
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
