@@ -41,7 +41,7 @@ for isub in range(60):
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
-    nlen = 200
+    nlen = 400
     ntrain = np.shape(data['ERP'])[3]
 
     tar_data = list()
@@ -50,7 +50,7 @@ for isub in range(60):
     nontar_label = list()
 
     for i in range(ntrain):
-        target = data['ERP'][:,200:,data['target'][i][0]-1,i]
+        target = data['ERP'][:,:,data['target'][i][0]-1,i]
         tar_data.append(target)
         tar_label.append(1)
 
@@ -58,7 +58,7 @@ for isub in range(60):
             if j == (data['target'][i][0]-1):
                 continue
             else:
-                nontar_data.append(data['ERP'][:,200:,j,i])
+                nontar_data.append(data['ERP'][:,:,j,i])
                 nontar_label.append(0)
 
     tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
@@ -103,7 +103,7 @@ for isub in range(60):
     ntest = np.shape(data2['ERP'])[3]
 
     for i in range(ntest):
-        test = data2['ERP'][:,200:,:,i]
+        test = data2['ERP'][:,:,:,i]
         total_prob = list()
         for j in range(4):
             test_data = test[:,:,j]
@@ -122,5 +122,5 @@ for isub in range(60):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_RCNN Result_CNN_BN.csv'
+filename = 'P300_Result_CNN_BN.csv'
 df.to_csv(filename)

@@ -27,7 +27,7 @@ import numpy as np
 import random
 from keras import optimizers
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv1D, MaxPooling1D, BatchNormalization
+from keras.layers import Dense, Dropout, Flatten, Conv1D, MaxPooling1D, BatchNormalization, Activation
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -76,16 +76,52 @@ for isub in range(60):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
+    # Batch normalization은 activation function 후, dropout layer 전
     model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=10 , input_shape=(nlen, nch), activation='relu'))
-    model.add(Conv1D(filters=64, kernel_size=10, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling1D(pool_size=2))
+    model.add(Conv1D(filters=32, kernel_size=10 , input_shape=(nlen, nch), padding='same'))
+    model.add(Conv1D(filters=32, kernel_size=10, padding='same'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.25))
+    model.add(MaxPooling1D(pool_size=1))
+
+    model.add(Conv1D(filters=32, kernel_size=10, padding='same'))
+    model.add(Conv1D(filters=32, kernel_size=10, padding='same'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.25))
+    model.add(MaxPooling1D(pool_size=1))
+
+    model.add(Conv1D(filters=64, kernel_size=10, padding='same'))
+    model.add(Conv1D(filters=64, kernel_size=10, padding='same'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.25))
+    model.add(MaxPooling1D(pool_size=1))
+
+    model.add(Conv1D(filters=64, kernel_size=10, padding='same'))
+    model.add(Conv1D(filters=64, kernel_size=10, padding='same'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.25))
+    model.add(MaxPooling1D(pool_size=1))
+
+    model.add(Conv1D(filters=32, kernel_size=10))
+    model.add(Conv1D(filters=32, kernel_size=10))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.25))
+    model.add(MaxPooling1D(pool_size=1))
+
     model.add(Flatten())
-    model.add(Dense(50, activation='relu'))
+    model.add(Dense(50))
+    model.add(Activation('relu'))
+    model.add(Dense(30))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
+    # print(model.summary())
     early_stopping = EarlyStopping(patience=10)
     model.fit(train_data, train_label, epochs=200, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
@@ -113,7 +149,8 @@ for isub in range(60):
     total_acc.append((corr_ans/ntest)*100)
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
+    print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN.csv'
+filename = 'P300 Result_DCNN_BN.csv'
 df.to_csv(filename)
