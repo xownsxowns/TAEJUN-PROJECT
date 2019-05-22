@@ -9,7 +9,7 @@ path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) +
 data = io.loadmat(path)
 
 nch = np.shape(data['ERP'])[0]
-nlen = 200
+nlen = 400
 ntrain = np.shape(data['ERP'])[3]
 
 tar_data = list()
@@ -19,7 +19,7 @@ nontar_label = list()
 
 # 200ms~600ms 길이 자른것
 for i in range(ntrain):
-    target = data['ERP'][:, 200:, data['target'][i][0] - 1, i]
+    target = data['ERP'][:, :, data['target'][i][0] - 1, i]
     tar_data.append(target)
     tar_label.append(1)
 
@@ -27,7 +27,7 @@ for i in range(ntrain):
         if j == (data['target'][i][0] - 1):
             continue
         else:
-            nontar_data.append(data['ERP'][:, 200:, j, i])
+            nontar_data.append(data['ERP'][:, :, j, i])
             nontar_label.append(0)
 
 tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
@@ -35,7 +35,7 @@ nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
 # Transform the time series into Gramian Angular Fields
 # image_size -> Shape of output
-gasf = GramianAngularField(image_size=0.1, method='summation')
+gasf = GramianAngularField(image_size=20, method='summation')
 X_gasf = gasf.fit_transform(tar_data[:,:,0])
 # gadf = GramianAngularField(image_size=10, method='difference')
 # X_gadf = gadf.fit_transform(tar_data[:,:,0])
