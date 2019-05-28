@@ -1,6 +1,8 @@
 import os
 import numpy as np
 from scipy import io
+import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import pandas as pd
 from tqdm import tqdm
@@ -21,6 +23,11 @@ eeg = data['data'][:,150:,:]
 eeg = np.transpose(eeg, (1,0,2))
 n_ch = 29
 n_timepoint = 1000
+
+## MNIST 데이터 불러오기
+mnist_data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/data.mat')
+mnist_total = mnist_data['data'][0]
+
 
 # label 불러오기
 label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
