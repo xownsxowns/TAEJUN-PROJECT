@@ -13,24 +13,29 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.datasets import mnist
 from keras.optimizers import Adam
 from keras import initializers
+from sklearn.preprocessing import StandardScaler
+
 
 os.environ["KERAS_BACKEND"] = "tensorflow"
 np.random.seed(10)
-
+random_dim = 100
 ## EEG 데이터 불러오기
-data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/ME1.mat')
+# data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/ME1.mat')
+data = io.loadmat('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/ME1.mat')
 eeg = data['data'][:,150:,:]
 eeg = np.transpose(eeg, (1,0,2))
 n_ch = 29
 n_timepoint = 1000
 
 ## MNIST 데이터 불러오기
-mnist_data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/data.mat')
+# mnist_data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/data.mat')
+mnist_data = io.loadmat('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/data.mat')
 mnist_total = mnist_data['data'][0]
 
 
 # label 불러오기
-label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+# label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 label.columns = ['label']
 label.head()
 # label이 1인 index 찾기
@@ -39,6 +44,13 @@ label_1 = np.ones((np.shape(index_1)))
 # label이 1인 eeg 데이터 찾기
 eeg_1 = eeg[:,:,index_1]
 eeg_1 = np.reshape(eeg_1,(66,1000,29))
+# label이 1인 mnist 데이터 찾기
+mnist_one = mnist_total[index_1]
+mnist_one_data = list()
+for i in range(len(mnist_one)):
+    mnist_one_data.append(mnist_one[i])
+mnist_one_data = np.reshape(mnist_one_data, (66, (np.shape(mnist_one_data)[1]*np.shape(mnist_one_data)[2])))
+
 ## Learning EEG latent space
 model = Sequential()
 model.add(LSTM(50, input_shape=(n_timepoint,n_ch)))
@@ -56,6 +68,9 @@ layer_output = get_3rd_layer_output([eeg_1])[0]
 np.shape(layer_output)
 # layer_output is (66,29)
 
+# latent variable standardization
+latent = StandardScaler().fit_transform(np.transpose(layer_output)).transpose()
+
 # GAN
 # Adam optimizer를 사용
 def get_optimizer():
@@ -65,7 +80,7 @@ def get_optimizer():
 # Generator 만들기
 def get_generator(optimizer):
     generator = Sequential()
-    generator.add(Dense(256, input_dim=n_ch,
+    generator.add(Dense(256, input_dim=(n_ch+random_dim),
                         kernel_initializer=initializers.RandomNormal(stddev=0.02)))
     generator.add(LeakyReLU(0.2))
 
@@ -102,12 +117,12 @@ def get_discriminator(optimizer):
 
 
 # random_dim 대신에 EEG dimension 넣어보자
-def get_gan_network(discriminator, random_dim, generator, optimizer):
+def get_gan_network(discriminator, random_dim, generator, optimizer, n_ch):
     # 우리는 generator와 discriminator를 동시에 학습시키고 싶을 때 trainable을 False로 설정합니다.
     discriminator.trainable = False
 
     # GAN 입력 (노이즈)은 위에서 100 차원으로 설정했습니다. (EEG는 다를듯)
-    gan_input = Input(shape=(random_dim,))
+    gan_input = Input(shape=((random_dim+n_ch),))
 
     # Generator의 결과는 이미지 입니다.
     x = generator(gan_input)
@@ -120,9 +135,10 @@ def get_gan_network(discriminator, random_dim, generator, optimizer):
     return gan
 
 # 생성된 MNIST 이미지를 보여주는 함수
-def plot_generated_images(epoch, generator, examples=100, dim=(10,10), figsize=(10,10)):
-    noise = np.random.normal(0,1,size=[examples, n_ch])
-    generated_images = generator.predict(noise)
+def plot_generated_images(epoch, generator, latent, examples=66, dim=(10,10), figsize=(10,10)):
+    noise = np.random.normal(0,1,size=[examples, random_dim])
+    noise_eeg = np.concatenate((noise, latent[:examples,:]), axis=1)
+    generated_images = generator.predict(noise_eeg)
     generated_images = generated_images.reshape(examples, 28, 28)
 
     plt.figure(figsize=figsize)
@@ -135,41 +151,43 @@ def plot_generated_images(epoch, generator, examples=100, dim=(10,10), figsize=(
 
 
 # 네트워크 훈련 및 이미지 확인
-def train(epochs=1, batch_size=128):
-    # train 데이터와 test 데이터를 가져옵니다.
-    x_train, y_train, x_test, y_test = load_mnist_data()
+epochs=200
+batch_size=66
+# train 데이터와 test 데이터를 가져옵니다.
+x_train = mnist_one_data
 
-    # train 데이터를 128 사이즈의 batch 로 나눕니다.
+# train 데이터를 128 사이즈의 batch 로 나눕니다.
 
-    # 우리의 GAN 네트워크를 만듭니다.
-    adam = get_optimizer()
-    generator = get_generator(adam)
-    discriminator = get_discriminator(adam)
-    gan = get_gan_network(discriminator, n_ch, generator, adam)
+# 우리의 GAN 네트워크를 만듭니다.
+adam = get_optimizer()
+generator = get_generator(adam)
+discriminator = get_discriminator(adam)
+gan = get_gan_network(discriminator, random_dim, generator, adam, n_ch)
 
-    for e in range(1, epochs + 1):
-        print('-' * 15, 'Epoch %d' % e, '-' * 15)
-        # 입력으로 사용할 random 노이즈와 이미지를 가져옵니다.
-        noise = np.random.normal(0, 1, size=[batch_size, n_ch])
+for e in range(1, epochs + 1):
+    print('-' * 15, 'Epoch %d' % e, '-' * 15)
+    # 입력으로 사용할 random 노이즈와 이미지를 가져옵니다.
+    noise = np.random.normal(0, 1, size=[batch_size, random_dim])
+    noise_eeg = np.concatenate((noise, latent), axis=1)
+    image_batch = x_train[np.random.randint(0, x_train.shape[0], size=batch_size)]
 
-        image_batch = x_train[np.random.randint(0, x_train.shape[0], size=batch_size)]
+    # MNIST 이미지를 생성합니다
+    generated_images = generator.predict(noise_eeg)
+    X = np.concatenate([image_batch, generated_images])
 
-        # MNIST 이미지를 생성합니다
-        generated_images = generator.predict(noise)
-        X = np.concatenate([image_batch, generated_images])
+    y_dis = np.zeros(2 * batch_size)
+    y_dis[:batch_size] = 0.9
 
-        y_dis = np.zeros(2 * batch_size)
-        y_dis[:batch_size] = 0.9
+    # Discriminator를 학습시킵니다.
+    discriminator.trainable = True
+    discriminator.train_on_batch(X, y_dis)
 
-        # Discriminator를 학습시킵니다.
-        discriminator.trainable = True
-        discriminator.train_on_batch(X, y_dis)
+    # Generator를 학습시킵니다.
+    noise = np.random.normal(0, 1, size=[batch_size, random_dim])
+    noise_eeg = np.concatenate((noise, latent), axis=1)
+    y_gen = np.ones(batch_size)
+    discriminator.trainable = False
+    gan.train_on_batch(noise_eeg, y_gen)
 
-        # Generator를 학습시킵니다.
-        noise = np.random.normal(0, 1, size=[batch_size, n_ch])
-        y_gen = np.ones(batch_size)
-        discriminator.trainable = False
-        gan.train_on_batch(noise, y_gen)
-
-        if e == 1 or e % 20 == 0:
-            plot_generated_images(e, generator)
+    if e == 1 or e % 20 == 0:
+        plot_generated_images(e, generator, latent)

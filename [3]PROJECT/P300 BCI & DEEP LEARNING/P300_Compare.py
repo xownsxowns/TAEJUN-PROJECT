@@ -34,7 +34,11 @@ from keras.callbacks import EarlyStopping
 
 total_acc = list()
 clf_list = list()
-for isub in range(60):
+
+train_acc_cnn = list()
+train_acc_svm = list()
+
+for isub in range(40,60):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
@@ -72,6 +76,7 @@ for isub in range(60):
     svm_total = list()
     cnn_total = list()
 
+    num = 0
     for train, test in kf.split(train_data):
 
         X_train, X_test, y_train, y_test = train_data[train], train_data[test], train_label[train], train_label[test]
@@ -111,7 +116,12 @@ for isub in range(60):
         model.fit(X_train, y_train, epochs=200, batch_size=20, validation_data=(X_test, y_test), callbacks=[early_stopping])
         _, cnn_acc = model.evaluate(X_test, y_test, verbose=0)
         cnn_total.append(cnn_acc)
-        print('cnn is over: {0}'.format(isub))
+
+        num = num+1
+        print('cnn is over: {0} - {1}'.format(isub, num))
+
+    train_acc_cnn.append(np.mean(cnn_total))
+    train_acc_svm.append(np.mean(svm_total))
 
     if np.mean(svm_total) >= np.mean(cnn_total):
         ## train
@@ -273,7 +283,13 @@ for isub in range(60):
 
 df = pd.DataFrame(total_acc)
 dff = pd.DataFrame(clf_list)
-filename = 'P300_Result_compare.csv'
-filename2 = 'P300_Result_clf.csv'
+dfff = pd.DataFrame(train_acc_svm)
+dffff = pd.DataFrame(train_acc_svm)
+filename = 'P300_Result_compare3.csv'
+filename2 = 'P300_Result_clf3.csv'
+filename3 = 'P300_Result_train_acc_svm3.csv'
+filename4 = 'P300_Result_train_acc_cnn3.csv'
 df.to_csv(filename)
 dff.to_csv(filename2)
+dfff.to_csv(filename3)
+dffff.to_csv(filename4)

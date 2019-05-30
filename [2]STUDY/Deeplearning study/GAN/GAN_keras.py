@@ -109,7 +109,7 @@ def train(epochs=1, batch_size=128):
     x_train, y_train, x_test, y_test = load_mnist_data()
 
     # train 데이터를 128 사이즈의 batch 로 나눕니다.
-    batch_count = x_train.shape[0] // batch_size
+    batch_count = x_train[:500,:].shape[0] // batch_size
 
     # 우리의 GAN 네트워크를 만듭니다.
     adam = get_optimizer()
@@ -123,7 +123,7 @@ def train(epochs=1, batch_size=128):
             # 입력으로 사용할 random 노이즈와 이미지를 가져옵니다.
             noise = np.random.normal(0, 1, size=[batch_size, random_dim])
 
-            image_batch = x_train[np.random.randint(0, x_train.shape[0], size=batch_size)]
+            image_batch = x_train[:batch_size,:]
 
             # MNIST 이미지를 생성합니다.
             generated_images = generator.predict(noise)
@@ -146,7 +146,7 @@ def train(epochs=1, batch_size=128):
             plot_generated_image(e, generator)
 
 if __name__ == '__main__':
-    train(100, 128)
+    train(400, 128)
 
 
 
