@@ -3,20 +3,17 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from keras.utils import np_utils
-from keras.wrappers.scikit_learn import KerasClassifier
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-
-path = '/Users/Taejun/Desktop/me1/theta.mat'
-data = io.loadmat(path)
-label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
-
 from keras.models import Sequential
 from keras.layers import *
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
+from keras.callbacks import EarlyStopping
 
-re_data = np.reshape(data['theta'][:,150:,:],(500,1000,29))
+path = '/Users/Taejun/Desktop/me1/delta.mat'
+data = io.loadmat(path)
+label = pd.read_csv('E:/[3] 수업/ME특론1/dataset/label.txt',header=None, engine='python')
+
+re_data = np.reshape(data['delta'][:,150:,:],(500,1000,29))
 
 # fix random seed for reproducibility
 seed = 7
@@ -33,23 +30,12 @@ for train, test in kfold.split(re_data, label):
         re_data[train][:, i, :] = scalers[i].fit_transform(re_data[train][:, i, :])
 
     model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=20, input_shape=(1000, 29)))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Conv1D(filters=64, kernel_size=20))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling1D(pool_size=2))
-    model.add(Flatten())
-    model.add(Dense(50))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
+    model.add(LSTM(50, input_shape=(1000, 29)))
+    model.add(Dense(20, activation='relu'))
+    model.add(Dropout(0.25))
     model.add(Dense(10, activation='softmax'))
     model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
     model.fit(re_data[train], label[train], epochs=50, batch_size=20)
-    # evaluate the model
 
     for k in range(re_data[test].shape[1]):
         re_data[test][:, k, :] = scalers[k].transform(re_data[test][:, k, :])
