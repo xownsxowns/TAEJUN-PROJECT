@@ -9,9 +9,9 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from keras.callbacks import EarlyStopping
 
-path = '/Users/Taejun/Desktop/me1/alpha.mat'
+path = 'C:/Users/jhpark/Desktop/me1/alpha.mat.mat'
 data = io.loadmat(path)
-label = pd.read_csv('E:/[3] 수업/ME특론1/dataset/label.txt',header=None, engine='python')
+label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 
 re_data = np.reshape(data['alpha'][:,150:,:],(500,1000,29))
 

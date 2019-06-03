@@ -7,9 +7,9 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
-path = '/Users/Taejun/Desktop/me1/beta.mat'
+path = 'C:/Users/jhpark/Desktop/me1/beta.mat'
 data = io.loadmat(path)
-label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 
 from keras.models import Sequential
 from keras.layers import *

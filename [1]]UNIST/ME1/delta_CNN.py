@@ -7,16 +7,16 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
-path = '/Users/Taejun/Desktop/me1/beta.mat'
+path = 'C:/Users/jhpark/Desktop/me1/delta.mat'
 data = io.loadmat(path)
-label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 
 from keras.models import Sequential
 from keras.layers import *
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
-re_data = np.reshape(data['theta'][:,150:,:],(500,1000,29))
+re_data = np.reshape(data['delta'][:,150:,:],(500,1000,29))
 
 # fix random seed for reproducibility
 seed = 7
