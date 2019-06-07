@@ -65,15 +65,20 @@ for isub in range(60):
     train_data = np.concatenate((tar_data, nontar_data))
     train_label = np.concatenate((tar_label, nontar_label))
 
+    ori_shape = train_data.shape
+    reshape_data = np.reshape(train_data, (train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
+    data_res, y_res = sm.fit_resample(reshape_data, train_label)
+    data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
+
     ## standardScaler 해줘보자
     scalers = {}
-    for i in range(train_data.shape[1]):
+    for i in range(data_res.shape[1]):
         scalers[i] = StandardScaler()
-        train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
+        data_res[:, i, :] = scalers[i].fit_transform(data_res[:, i, :])
 
-    new_train_data = train_data.reshape((train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
+    new_train_data = data_res.reshape((data_res.shape[0], (data_res.shape[1] * data_res.shape[2])))
     clf = SVC(probability=True)
-    clf.fit(new_train_data, train_label)
+    clf.fit(new_train_data, y_res)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -103,5 +108,5 @@ for isub in range(60):
     print(total_acc)
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_SVM.csv'
+filename = 'P300_Result_SVM_smote.csv'
 df.to_csv(filename)
