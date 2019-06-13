@@ -1,9 +1,18 @@
 import cv2
 import sys
+from keras.models import Sequential, load_model
+from keras.layers import Dense
+from keras.callbacks import ModelCheckpoint
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 # Path = sys.argv[1] if len(sys.argv) > 1 else '.'
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
+model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/model.h5')
+
+
 
 video_capture = cv2.VideoCapture(0)
 
