@@ -51,6 +51,7 @@ print(model.summary())
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics= ['accuracy'])
 
 # Fitting the CNN to the images
+# class 0:Anger, 1:Fear, 2:Happy, 3:Neutral, 4:Sad, 5:Surprise
 from keras.preprocessing.image import ImageDataGenerator
 
 train_datagen = ImageDataGenerator(rescale=1./255, shear_range=0.2, zoom_range=0.2, horizontal_flip=True)
@@ -67,7 +68,7 @@ test_set = test_datagen.flow_from_directory('E:/[2] 연구/[3] Facial/test_set',
 
 model.fit_generator(training_set,
                     steps_per_epoch=300,
-                    epochs=30,
+                    epochs=50,
                     validation_data=test_set,
                     validation_steps=20)
 

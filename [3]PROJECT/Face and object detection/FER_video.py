@@ -7,11 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# Path = sys.argv[1] if len(sys.argv) > 1 else '.'
+class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
 model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/model.h5')
-
 
 
 video_capture = cv2.VideoCapture(0)
@@ -34,7 +33,13 @@ while True:
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x,y), (x+w,y+h),(0,255,0),2)
         ## roi를 뽑아내는 코드 (roi_color shape??)
-        # roi_color = frame[y:y+h, x:x+w]
+        roi_color = frame[y:y+h, x:x+w]
+        roi_color = cv2.resize(roi_color, (64,64))
+        roi_color = roi_color.astype('float') / 255.0
+        roi_color = np.expand_dims(roi_color, axis = 0)
+        preds = model.predict(roi_color)[0]
+        label = class_name[preds.argmax()]
+        print(label)
     # Display the resulting frame
     cv2.imshow('Video', frame)
 
