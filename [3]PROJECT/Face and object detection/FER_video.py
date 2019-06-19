@@ -38,8 +38,15 @@ while True:
         roi_color = roi_color.astype('float') / 255.0
         roi_color = np.expand_dims(roi_color, axis = 0)
         preds = model.predict(roi_color)[0]
+        percen = (preds[preds.argmax()]/sum(preds)) * 100
+        percen = "%0.2f" % percen
         label = class_name[preds.argmax()]
-        print(label)
+        print(label, percen)
+        # label display
+        y_re = y - 15 if y - 15 > 15 else y + 15
+        label_percen = label+':'+str(percen)+'%'
+        cv2.putText(frame, str(label_percen), (x, y_re), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                    (0, 255, 0))
     # Display the resulting frame
     cv2.imshow('Video', frame)
 

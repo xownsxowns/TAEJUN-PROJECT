@@ -77,7 +77,7 @@ for isub in range(60):
         data_res[:, i, :] = scalers[i].fit_transform(data_res[:, i, :])
 
     new_train_data = data_res.reshape((data_res.shape[0], (data_res.shape[1] * data_res.shape[2])))
-    clf = SVC(probability=True)
+    clf = SVC(probability=True, kernel='sigmoid')
     clf.fit(new_train_data, y_res)
 
     ## Test
@@ -108,5 +108,5 @@ for isub in range(60):
     print(total_acc)
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_SVM_borderlinesmote.csv'
+filename = 'P300_Result_SVM_borderlinesmote_sigmoid.csv'
 df.to_csv(filename)
