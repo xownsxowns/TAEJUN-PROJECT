@@ -10,7 +10,7 @@ import pandas as pd
 class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
-model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/model.h5')
+model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/model2.h5')
 
 
 video_capture = cv2.VideoCapture(0)
