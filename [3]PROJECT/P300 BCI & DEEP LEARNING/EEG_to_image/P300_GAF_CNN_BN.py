@@ -27,7 +27,7 @@ import numpy as np
 import random
 from keras import optimizers
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv1D, MaxPooling1D, BatchNormalization, Activation
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -37,11 +37,10 @@ total_acc = list()
 for isub in range(60):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
-    nlen = 225
+    nlen = 250
     ntrain = np.shape(data['ERP'])[3]
 
     tar_data = list()
@@ -49,42 +48,47 @@ for isub in range(60):
     nontar_data = list()
     nontar_label = list()
 
+    # 100ms~600ms 길이 자른것
     for i in range(ntrain):
-        target = data['ERP'][:,175:,data['target'][i][0]-1,i]
+        target = data['ERP'][:, 150:, data['target'][i][0] - 1, i]
         tar_data.append(target)
         tar_label.append(1)
 
         for j in range(4):
-            if j == (data['target'][i][0]-1):
+            if j == (data['target'][i][0] - 1):
                 continue
             else:
-                nontar_data.append(data['ERP'][:,175:,j,i])
+                nontar_data.append(data['ERP'][:, 150:, j, i])
                 nontar_label.append(0)
 
-    tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
-    nontar_data = np.reshape(nontar_data,((ntrain*3),nlen,nch))
+    tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
+    nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
-    train_vali_data = np.concatenate((tar_data, nontar_data))
-    train_vali_label = np.concatenate((tar_label, nontar_label))
+    for itrial in range(nontar_data.shape[0]):
+        for ich in range(nontar_data.shape[2]):
+            file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/nontar_trial' + str(itrial + 1) + '_GAF_ch' + str(ich + 1) + '.png'
 
-    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
 
-    ## standardScaler 해줘보자
-    scalers = {}
-    for i in range(train_data.shape[1]):
-        scalers[i] = StandardScaler()
-        train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
-        vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
+
+
+
+
+
+
+
+
+
+
 
     model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=10 , input_shape=(nlen, nch)))
+    model.add(Conv2D(32, (3, 3), input_shape=(64, 64, 3), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Conv1D(filters=64, kernel_size=10))
+    model.add(Conv2D(32, (3, 3), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(MaxPooling1D(pool_size=2))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
     model.add(Flatten())
     model.add(Dense(50))
     model.add(BatchNormalization())

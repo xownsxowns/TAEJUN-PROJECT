@@ -14,7 +14,7 @@ test_set = test_datagen.flow_from_directory('E:/[2] 연구/[3] Facial/test_set',
                                             class_mode='categorical')
 
 #Confution Matrix and Classification Report
-Y_pred = model.predict_generator(test_set, steps=(3000 // 32+1 ))
+Y_pred = model.predict_generator(test_set, 3000)
 y_pred = np.argmax(Y_pred, axis=1)
 print('Confusion Matrix')
 print(confusion_matrix(test_set.classes, y_pred))
