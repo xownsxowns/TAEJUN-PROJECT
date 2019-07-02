@@ -21,11 +21,10 @@
 
 ## validation, early stopping
 
-from scipy import io, signal
+from scipy import io
 import pandas as pd
 import numpy as np
-import random
-from keras import optimizers
+import PIL.Image as pilimg
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation
 from keras.callbacks import EarlyStopping
@@ -64,27 +63,52 @@ for isub in range(60):
     tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
     nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
+    nontar_trial = list()
+    # non target data
     for itrial in range(nontar_data.shape[0]):
         for ich in range(nontar_data.shape[2]):
             file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/nontar_trial' + str(itrial + 1) + '_GAF_ch' + str(ich + 1) + '.png'
+            if ich == 0:
+                image_open = pilimg.open(file_path)
+                image_open = image_open.resize((64,64))
+                image = np.array(image_open)[...,:3]
+                image_total = image
+            else:
+                image_open = pilimg.open(file_path)
+                image_open = image_open.resize((64, 64))
+                image = np.array(image_open)[...,:3]
+                image_total = np.concatenate((image_total, image), axis=2)
+        nontar_trial.append(image_total)
+        print('{0} nontar trial ended'.format(itrial+1))
 
+    tar_trial = list()
+    # target data
+    for itrial in range(tar_data.shape[0]):
+        for ich in range(tar_data.shape[2]):
+            file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/tar_trial' + str(itrial + 1) + '_GAF_ch' + str(ich + 1) + '.png'
+            if ich == 0:
+                image_open = pilimg.open(file_path)
+                image_open = image_open.resize((64,64))
+                image = np.array(image_open)[...,:3]
+                image_total = image
+            else:
+                image_open = pilimg.open(file_path)
+                image_open = image_open.resize((64, 64))
+                image = np.array(image_open)[...,:3]
+                image_total = np.concatenate((image_total, image), axis=2)
+        tar_trial.append(image_total)
+        print('{0} tar trial ended'.format(itrial+1))
 
+    train_vali_data = np.concatenate((tar_trial, nontar_trial))
+    train_vali_label = np.concatenate((tar_label, nontar_label))
 
-
-
-
-
-
-
-
-
-
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
 
     model = Sequential()
-    model.add(Conv2D(32, (3, 3), input_shape=(64, 64, 3), padding='same'))
+    model.add(Conv2D(32, (3, 3), input_shape=(64, 64, 90), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Conv2D(32, (3, 3), padding='same'))
+    model.add(Conv2D(64, (3, 3), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
@@ -96,35 +120,8 @@ for isub in range(60):
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     # print(model.summary())
-    early_stopping = EarlyStopping(patience=10)
-    model.fit(train_data, train_label, epochs=200, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+    early_stopping = EarlyStopping(patience=20)
+    model.fit(train_data, train_label, epochs=500, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    data2 = io.loadmat(path)
-    corr_ans = 0
-    ntest = np.shape(data2['ERP'])[3]
-
-    for i in range(ntest):
-        test = data2['ERP'][:,175:,:,i]
-        total_prob = list()
-        for j in range(4):
-            test_data = test[:,:,j]
-            test_data = np.reshape(test_data, (1,nlen,nch))
-            for k in range(test_data.shape[1]):
-                test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
-            prob = model.predict_proba(test_data)
-            total_prob.append(prob[0][0])
-        predicted_label = np.argmax(total_prob)
-        if data2['target'][i][0] == (predicted_label+1):
-            corr_ans += 1
-
-    total_acc.append((corr_ans/ntest)*100)
-    print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
-    print(total_acc)
-    print(np.mean(total_acc))
-
-df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_BN.csv'
-df.to_csv(filename)
+    # ## Test
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
