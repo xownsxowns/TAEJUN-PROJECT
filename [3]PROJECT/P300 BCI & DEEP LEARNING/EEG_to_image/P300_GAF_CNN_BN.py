@@ -30,6 +30,9 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNor
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import ImageGrid
+from pyts.image import GramianAngularField
 
 total_acc = list()
 
@@ -123,5 +126,64 @@ for isub in range(60):
     early_stopping = EarlyStopping(patience=20)
     model.fit(train_data, train_label, epochs=500, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    # ## Test
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    ## Test
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    data = io.loadmat(path)
+
+    nch = np.shape(data['ERP'])[0]
+    nlen = 250
+    ntest = np.shape(data['ERP'])[3]
+    nstim = 4
+
+    test_data = list()
+    # ntest, nch, nlen, nstim
+    # 100ms~600ms 길이 자른것
+    for i in range(ntest):
+        target = data['ERP'][:, 150:, :, i]
+        test_data.append(target)
+    # nstim, ntest, nlen, nch
+    test_data = np.transpose(test_data, (3, 0, 2, 1))
+
+    corr_ans = 0
+    for itrial in range(test_data.shape[1]):
+        stim1_trial = list()
+        stim2_trial = list()
+        stim3_trial = list()
+        stim4_trial = list()
+        total_prob = list()
+        for nstim in range(test_data.shape[0]):
+            for ich in range(tar_data.shape[2]):
+                file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/test_trial' + str(nstim+1) + '-' + str(itrial+1) + '_GAF_ch' + str(ich+1) + '.png'
+                if ich == 0:
+                    image_open = pilimg.open(file_path)
+                    image_open = image_open.resize((64,64))
+                    image = np.array(image_open)[...,:3]
+                    image_total = image
+                else:
+                    image_open = pilimg.open(file_path)
+                    image_open = image_open.resize((64, 64))
+                    image = np.array(image_open)[...,:3]
+                    image_total = np.concatenate((image_total, image), axis=2)
+            if nstim == 0:
+                stim1_trial.append(image_total)
+            elif nstim == 1:
+                stim2_trial.append(image_total)
+            elif nstim == 2:
+                stim3_trial.append(image_total)
+            elif nstim == 3:
+                stim4_trial.append(image_total)
+
+        prob = model.predict_proba(stim1_trial)
+        total_prob.append(prob[0][0])
+        prob = model.predict_proba(stim2_trial)
+        total_prob.append(prob[0][0])
+        prob = model.predict_proba(stim3_trial)
+        total_prob.append(prob[0][0])
+        prob = model.predict_proba(stim4_trial)
+        total_prob.append(prob[0][0])
+
+        predicted_label = np.argmax(total_prob)
+        if data['target'][itrial][0] == (predicted_label+1):
+            corr_ans += 1
+
+        print('sub{0}: {1} test trial ended'.format(isub+1, itrial+1))
