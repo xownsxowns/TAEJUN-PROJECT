@@ -21,6 +21,7 @@
 
 ## validation, early stopping
 
+
 from scipy import io
 import pandas as pd
 import numpy as np
@@ -33,6 +34,13 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from pyts.image import GramianAngularField
+
+import tensorflow as tf
+from keras.backend import tensorflow_backend as K
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+K.set_session(tf.Session(config=config))
+
 
 total_acc = list()
 
@@ -106,11 +114,13 @@ for isub in range(60):
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
     train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
+    nch = tar_data.shape[2]
 
     model = Sequential()
-    model.add(Conv2D(32, (3, 3), input_shape=(64, 64, 90), padding='same'))
+    model.add(Conv2D(32, (3, 3), input_shape=(64, 64, (nch*3)), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
+    model.add(Dropout(0.5))
     model.add(Conv2D(64, (3, 3), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
@@ -123,9 +133,9 @@ for isub in range(60):
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     # print(model.summary())
-    early_stopping = EarlyStopping(patience=20)
-    model.fit(train_data, train_label, epochs=500, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
-
+    # early_stopping = EarlyStopping(patience=20)
+    # model.fit(train_data, train_label, epochs=500, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+    model.fit(train_data, train_label, epochs=500, batch_size=20)
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data = io.loadmat(path)
@@ -173,17 +183,24 @@ for isub in range(60):
             elif nstim == 3:
                 stim4_trial.append(image_total)
 
-        prob = model.predict_proba(stim1_trial)
+        total_trial = np.concatenate((stim1_trial,stim2_trial,stim3_trial,stim4_trial))
+        prob = model.predict_proba(total_trial)
         total_prob.append(prob[0][0])
-        prob = model.predict_proba(stim2_trial)
-        total_prob.append(prob[0][0])
-        prob = model.predict_proba(stim3_trial)
-        total_prob.append(prob[0][0])
-        prob = model.predict_proba(stim4_trial)
-        total_prob.append(prob[0][0])
+        total_prob.append(prob[1][0])
+        total_prob.append(prob[2][0])
+        total_prob.append(prob[3][0])
 
         predicted_label = np.argmax(total_prob)
         if data['target'][itrial][0] == (predicted_label+1):
             corr_ans += 1
 
         print('sub{0}: {1} test trial ended'.format(isub+1, itrial+1))
+
+    total_acc.append((corr_ans/ntest)*100)
+    print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
+    print(total_acc)
+    print(np.mean(total_acc))
+
+df = pd.DataFrame(total_acc)
+filename = 'P300_Result_CNN_GAF.csv'
+df.to_csv(filename)

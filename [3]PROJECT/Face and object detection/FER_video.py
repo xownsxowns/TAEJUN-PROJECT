@@ -2,6 +2,7 @@ import cv2
 from keras.models import load_model
 import numpy as np
 
+np.set_printoptions(precision=2)
 class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
@@ -11,6 +12,8 @@ video_path = 'E:/[2] 연구/[3] Facial/test_video.avi'
 
 video_capture = cv2.VideoCapture(video_path)
 video_capture.get(cv2.CAP_PROP_FPS)
+
+score_collect = list()
 
 while True:
     # Capture frame-by-frame
@@ -37,6 +40,7 @@ while True:
             roi_color = roi_color.astype('float') / 255.0
             roi_color = np.expand_dims(roi_color, axis = 0)
             preds = model.predict(roi_color)[0]
+            score_collect.append(preds)
             percen = (preds[preds.argmax()]/sum(preds)) * 100
             percen = "%0.2f" % percen
             label = class_name[preds.argmax()]
@@ -54,5 +58,10 @@ while True:
     else:
         break
 # When everything is done, release the capture
+score = np.sum(score_collect, axis=0) / np.size(score_collect, axis=0)
+score = (np.array(score)*100).tolist()
+print('Anger:{:0.2f}%, Fear:{:0.2f}%, Happy:{:0.2f}%, Neutral:{:0.2f}%, Sad:{:0.2f}%, Surprise:{:0.2f}%'.format(
+    score[0],score[1],score[2],score[3],score[4],score[5]))
+
 video_capture.release()
 cv2.destroyAllWindows()
