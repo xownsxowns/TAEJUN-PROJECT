@@ -11,9 +11,9 @@ pattern = re.compile(r'/')
 pattern2 = re.compile(r'[/.]')
 img_test = list()
 
-label_list = [0,1,2,3,4,6]
+label_list = [0,1,2,3,4,5,6]
 save_path = 'E:/[2] 연구/[3] Facial/npz_data/'
-num_neu, num_hap, num_sad, num_sur, num_fear, num_anger = 1,1,1,1,1,1
+num_neu, num_hap, num_sad, num_sur, num_fear, num_dis, num_anger = 1,1,1,1,1,1,1
 
 for i in range(img_list.shape[0]):
     if img_list['expression'][i] in label_list:
@@ -41,6 +41,10 @@ for i in range(img_list.shape[0]):
             new_path = 'E:/[2] 연구/[3] Facial/test_set/Fear/'
             shutil.copy(image_path, new_path + 'Fear' + str(num_fear) + '.' + name[1])
             num_fear += 1
+        elif img_list['expression'][i] == 5:
+            new_path = 'E:/[2] 연구/[3] Facial/test_set/Disgust/'
+            shutil.copy(image_path, new_path + 'Disgust' + str(num_dis) + '.' + name[1])
+            num_dis += 1
         elif img_list['expression'][i] == 6:
             new_path = 'E:/[2] 연구/[3] Facial/test_set/Anger/'
             shutil.copy(image_path, new_path + 'Anger' + str(num_anger) + '.' + name[1])

@@ -36,11 +36,12 @@ for i, layer in enumerate(model.layers):
 # for layer in model.layers:
 #     layer.trainable = False
 # or if we want to set the first 20 layers of the network to be non-trainable
-for layer in model.layers[:20]:
+for layer in model.layers[:88]:
     layer.trainable = False
-for layer in model.layers[20:]:
+for layer in model.layers[88:]:
     layer.trainable = True
 
+train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input) # included in our dependencies
 
 
 

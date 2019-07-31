@@ -1,6 +1,7 @@
 import cv2
 from keras.models import load_model
 import numpy as np
+import time
 
 np.set_printoptions(precision=2)
 class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
@@ -14,6 +15,9 @@ video_capture = cv2.VideoCapture(video_path)
 video_capture.get(cv2.CAP_PROP_FPS)
 
 score_collect = list()
+
+##### For FPS #####
+prevTime = 0 # for saving previous time
 
 while True:
     # Capture frame-by-frame
@@ -30,6 +34,12 @@ while True:
             minSize=(30, 30)
             # flags=cv2.cv.CV_HAAR_SCALE_IMAGE
         )
+
+        ### Get current Time
+        curTime = time.time()
+        sec = curTime - prevTime
+        prevTime = curTime
+        fps = 1/(sec)
 
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
@@ -51,6 +61,7 @@ while True:
             cv2.putText(frame, str(label_percen), (x, y_re), cv2.FONT_HERSHEY_SIMPLEX, 1,
                         (0, 255, 0))
         # Display the resulting frame
+        print("FPS:%0.1f" % fps)
         cv2.imshow('Video', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -62,6 +73,7 @@ score = np.sum(score_collect, axis=0) / np.size(score_collect, axis=0)
 score = (np.array(score)*100).tolist()
 print('Anger:{:0.2f}%, Fear:{:0.2f}%, Happy:{:0.2f}%, Neutral:{:0.2f}%, Sad:{:0.2f}%, Surprise:{:0.2f}%'.format(
     score[0],score[1],score[2],score[3],score[4],score[5]))
+print(np.shape(score))
 
 video_capture.release()
 cv2.destroyAllWindows()
