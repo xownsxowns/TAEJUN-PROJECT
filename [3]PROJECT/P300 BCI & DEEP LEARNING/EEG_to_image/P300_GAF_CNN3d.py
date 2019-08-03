@@ -27,7 +27,7 @@ import pandas as pd
 import numpy as np
 import PIL.Image as pilimg
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation
+from keras.layers import Dense, Dropout, Flatten, Conv3D, MaxPooling3D, BatchNormalization, Activation
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -74,66 +74,63 @@ for isub in range(60):
     tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
     nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
+
     nontar_trial = list()
     # non target data
     for itrial in range(nontar_data.shape[0]):
+        image_total = list()
         for ich in range(nontar_data.shape[2]):
             file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/nontar_trial' + str(itrial + 1) + '_GAF_ch' + str(ich + 1) + '.png'
-            if ich == 0:
-                image_open = pilimg.open(file_path)
-                image_open = image_open.resize((64,64))
-                image = np.array(image_open)[...,:3]
-                image_total = image
-            else:
-                image_open = pilimg.open(file_path)
-                image_open = image_open.resize((64, 64))
-                image = np.array(image_open)[...,:3]
-                image_total = np.concatenate((image_total, image), axis=2)
+            image_open = pilimg.open(file_path)
+            image_open = image_open.resize((64,64))
+            image = np.array(image_open)[...,:3]
+            image_total.append(image)
         nontar_trial.append(image_total)
         print('{0} nontar trial ended'.format(itrial+1))
+
+    # trial x image x image x channel x rgb
+    nontar_trial = np.transpose(nontar_trial, (0, 2, 3, 1, 4))
+
 
     tar_trial = list()
     # target data
     for itrial in range(tar_data.shape[0]):
+        image_tar = list()
         for ich in range(tar_data.shape[2]):
             file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/tar_trial' + str(itrial + 1) + '_GAF_ch' + str(ich + 1) + '.png'
-            if ich == 0:
-                image_open = pilimg.open(file_path)
-                image_open = image_open.resize((64,64))
-                image = np.array(image_open)[...,:3]
-                image_total = image
-            else:
-                image_open = pilimg.open(file_path)
-                image_open = image_open.resize((64, 64))
-                image = np.array(image_open)[...,:3]
-                image_total = np.concatenate((image_total, image), axis=2)
-        tar_trial.append(image_total)
+            image_open = pilimg.open(file_path)
+            image_open = image_open.resize((64,64))
+            image = np.array(image_open)[...,:3]
+            image_tar.append(image)
+        tar_trial.append(image_tar)
         print('{0} tar trial ended'.format(itrial+1))
+
+    tar_trial = np.transpose(tar_trial, (0, 2, 3, 1, 4))
 
     train_vali_data = np.concatenate((tar_trial, nontar_trial))
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
     train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
-    nch = tar_data.shape[2]
+    nch = tar_data.shape[3]
 
     model = Sequential()
-    model.add(Conv2D(64, (5, 5), input_shape=(64, 64, (nch*3)), padding='same'))
+    model.add(Conv3D(64, (5, 5, 5), input_shape=(64, 64, nch, 3), padding='same'))
     model.add(BatchNormalization())
-    model.add(Activation('sigmoid'))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(Conv2D(64, (3, 3), padding='same'))
+    model.add(Conv3D(64, (3, 3, 3), padding='same'))
     model.add(BatchNormalization())
-    model.add(Activation('sigmoid'))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(Conv2D(32, (3, 3), padding='same'))
+    model.add(Conv3D(32, (3, 3, 3), padding='same'))
     model.add(BatchNormalization())
-    model.add(Activation('sigmoid'))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
+    model.add(MaxPooling3D(pool_size=(3, 3, 3), strides=None))
     model.add(Flatten())
     model.add(Dense(50))
     model.add(BatchNormalization())
-    model.add(Activation('sigmoid'))
+    model.add(Activation('relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     # print(model.summary())
@@ -166,18 +163,13 @@ for isub in range(60):
         stim4_trial = list()
         total_prob = list()
         for nstim in range(test_data.shape[0]):
-            for ich in range(tar_data.shape[2]):
+            image_total = list()
+            for ich in range(test_data.shape[1]):
                 file_path = 'E:/[1] Experiment/[1] BCI/P300LSTM/GAFimage/' + 'sub' + str(isub + 1) + '/test_trial' + str(nstim+1) + '-' + str(itrial+1) + '_GAF_ch' + str(ich+1) + '.png'
-                if ich == 0:
-                    image_open = pilimg.open(file_path)
-                    image_open = image_open.resize((64,64))
-                    image = np.array(image_open)[...,:3]
-                    image_total = image
-                else:
-                    image_open = pilimg.open(file_path)
-                    image_open = image_open.resize((64, 64))
-                    image = np.array(image_open)[...,:3]
-                    image_total = np.concatenate((image_total, image), axis=2)
+                image_open = pilimg.open(file_path)
+                image_open = image_open.resize((64, 64))
+                image = np.array(image_open)[..., :3]
+                image_total.append(image)
             if nstim == 0:
                 stim1_trial.append(image_total)
             elif nstim == 1:
@@ -188,6 +180,8 @@ for isub in range(60):
                 stim4_trial.append(image_total)
 
         total_trial = np.concatenate((stim1_trial,stim2_trial,stim3_trial,stim4_trial))
+        # nstim x image x image x channel x RGB
+        total_trial = np.transpose(total_trial, (0, 2, 3, 1, 4))
         prob = model.predict_proba(total_trial)
         total_prob.append(prob[0][0])
         total_prob.append(prob[1][0])
