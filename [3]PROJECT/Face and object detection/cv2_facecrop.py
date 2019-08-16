@@ -3,12 +3,13 @@ import pandas as pd
 import re
 
 ## training image read
-img_path = 'E:/Manually_Annotated_file_lists/training.csv'
-img_list = pd.read_csv(img_path)
-pattern = re.compile(r'/')
-i = 1
-img_name = re.split(pattern, img_list['subDirectory_filePath'][i])[1]
-image_path = 'E:/Manually_Annotated_Images/' + re.split(pattern, img_list['subDirectory_filePath'][i])[0] + '/' + img_name
+# img_path = 'E:/Manually_Annotated_file_lists/training.csv'
+# img_list = pd.read_csv(img_path)
+# pattern = re.compile(r'/')
+# i = 3
+# img_name = re.split(pattern, img_list['subDirectory_filePath'][i])[1]
+# image_path = 'E:/Manually_Annotated_Images/' + re.split(pattern, img_list['subDirectory_filePath'][i])[0] + '/' + img_name
+image_path = 'test.jpg'
 
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 face_cascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
