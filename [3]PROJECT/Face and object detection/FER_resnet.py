@@ -10,7 +10,7 @@ from keras.layers import BatchNormalization, Conv2D, Activation, Dense, GlobalAv
 # number of classes
 K = 7
 
-input_tensor = Input(shape=(224, 224, 3), dtype='float32', name='input')
+input_tensor = Input(shape=(64, 64, 3), dtype='float32', name='input')
 
 
 def conv1_layer(x):
@@ -220,11 +220,11 @@ train_datagen = ImageDataGenerator(rescale=1./255, shear_range=0.2, zoom_range=0
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 training_set = train_datagen.flow_from_directory('E:/[2] 연구/[3] Facial/training_set',
-                                                 target_size=(224,224),
+                                                 target_size=(64,64),
                                                  batch_size=32,
                                                  class_mode='categorical')
 test_set = test_datagen.flow_from_directory('E:/[2] 연구/[3] Facial/test_set',
-                                            target_size=(224,224),
+                                            target_size=(64,64),
                                             batch_size=32,
                                             class_mode='categorical')
 
