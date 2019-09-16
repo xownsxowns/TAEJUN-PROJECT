@@ -18,9 +18,12 @@ import _pickle as cPickle
 # Labeling
 PVHA_allsub, PVLA_allsub, NVHA_allsub, NVLA_allsub, NEU_allsub = {},{},{},{},{}
 PVHA_label_allsub, PVLA_label_allsub, NVHA_label_allsub, NVLA_label_allsub, NEU_label_allsub = {},{},{},{},{}
+# path
+lab_path = '//192.168.1.181/office/[08] 공용데이터베이스/EEG/DEAP/data_preprocessed_python/s'
+mac_path = '/Volumes/TAEJUN_USB/DEAP/data_preprocessed_python/data_preprocessed_python/s'
 
 for isub in range(1,23):
-    filepath = '//192.168.1.181/office/[08] 공용데이터베이스/EEG/DEAP/data_preprocessed_python/s'+ str(isub) + '.dat'
+    filepath = mac_path + str(isub).zfill(2) + '.dat'
     x = cPickle.load(open(filepath, 'rb'), encoding='latin1')
     data = x['data']
     label = x['labels']
