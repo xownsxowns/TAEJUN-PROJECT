@@ -230,7 +230,7 @@ test_set = test_datagen.flow_from_directory('E:/[2] 연구/[3] Facial/test_set',
 
 resnet50.fit_generator(training_set,
                     steps_per_epoch=(280098//32),
-                    epochs=50,
+                    epochs=30,
                     validation_data=test_set,
                     validation_steps=20)
 

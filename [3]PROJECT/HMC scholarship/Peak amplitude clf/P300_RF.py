@@ -25,6 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+
 total_acc = list()
 
 for isub in range(30,60):
@@ -97,7 +98,7 @@ for isub in range(30,60):
     train_data = np.concatenate((local_peak_tar, local_peak_ntar))
     train_label = np.concatenate((tar_label, nontar_label))
 
-    clf = SVC(probability=True, kernel='sigmoid')
+    clf = RandomForestClassifier()
     clf.fit(train_data, train_label)
 
     ## Test
@@ -256,5 +257,5 @@ for isub in range(14):
     print(total_acc)
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_SVM_peak.csv'
+filename = 'P300_Result_RF_peak.csv'
 df.to_csv(filename)
