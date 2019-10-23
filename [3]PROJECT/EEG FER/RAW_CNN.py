@@ -25,7 +25,7 @@ path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/EEG FER/'
 read_emotion_label = np.load(path + 'emotion_label.npy', allow_pickle=True).item()
 
 acc = list()
-predict = np.ones((18,40))
+predict = np.zeros((22,40))
 passsub = [3,5,11,14]
 
 for itrial in range(1,23):
@@ -99,9 +99,9 @@ for itrial in range(1,23):
         predicted_label = model.predict_classes(np.expand_dims(test_data[i,:,:],axis=0))[0]
         if predicted_label == test_label[i]:
             correct_ans += 1
-        predict[itrial, i] = predicted_label
+        predict[itrial-1, i] = predicted_label
 
-    acc[itrial] = correct_ans/len(test_data)
+    acc.append(correct_ans/len(test_data))
     print(acc)
 
 path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/EEG FER/'

@@ -1,7 +1,9 @@
+
 import numpy as np
 import _pickle as cPickle
 from scipy import signal
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 import csv
 # data: 40x40x8064 [video/trial x channel(~32:EEG) x data]
 # channel: Geneva format
@@ -19,7 +21,7 @@ read_emotion_label = np.load(path + 'emotion_label.npy', allow_pickle=True).item
 
 # initialize parameter
 acc = list()
-predict = np.ones((18,40))
+predict = np.zeros((22,40))
 passsub = [3,5,11,14]
 
 for itrial in range(1,23):
@@ -81,8 +83,10 @@ for itrial in range(1,23):
             gamma_data[ii,ich] = gamma_psd
 
     psd_feature = np.concatenate((theta_data, alpha_data, beta_data, gamma_data), axis=1)
-    svm_clf = SVC()
-    svm_clf.fit(psd_feature, label)
+    # svm_clf = SVC()
+    # svm_clf.fit(psd_feature, label)
+    tree_clf = DecisionTreeClassifier()
+    tree_clf.fit(psd_feature, label)
 
     correct_ans = 0
 
@@ -111,23 +115,23 @@ for itrial in range(1,23):
 
     psd_test_feature = np.concatenate((theta_data, alpha_data, beta_data, gamma_data), axis=1)
 
+    predicted_label = tree_clf.predict(psd_test_feature)
     for i in range(psd_test_feature.shape[0]):
-        predicted_label = svm_clf.predict(test_data)
-        if predicted_label == test_label[i]:
+        if predicted_label[i] == test_label[i]:
             correct_ans += 1
-        predict[itrial, i] = predicted_label
+        predict[itrial-1, i] = predicted_label[i]
 
-    acc[itrial] = correct_ans / len(test_data)
+    acc.append(correct_ans / len(test_data))
     print(acc)
 
 path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/EEG FER/'
 
-f = open(path + 'ACC_SVM.csv', 'w', encoding='utf-8', newline='')
+f = open(path + 'ACC_tree.csv', 'w', encoding='utf-8', newline='')
 wr = csv.writer(f)
 wr.writerow(acc)
 f.close()
 
-np.savetxt(path + 'predicted_label_svm.csv', predict, fmt="%d", delimiter=",")
+np.savetxt(path + 'predicted_label_tree.csv', predict, fmt="%d", delimiter=",")
 
 
 
