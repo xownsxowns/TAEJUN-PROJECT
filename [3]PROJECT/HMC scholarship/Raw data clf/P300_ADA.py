@@ -89,7 +89,7 @@ for isub in range(30,60):
             test_data = test[:,:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
-                test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
             prob = clf.predict_proba(new_test_data)
             # prob = clf.predict(new_test_data)
@@ -162,7 +162,7 @@ for isub in range(14):
             test_data = test[:,:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
-                test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
             prob = clf.predict_proba(new_test_data)
             # prob = clf.predict(new_test_data)

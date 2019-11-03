@@ -36,8 +36,8 @@ total_acc = list()
 
 for isub in range(30,60):
     print(isub)
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
@@ -200,7 +200,7 @@ for isub in range(14):
             test_data = test[:,:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
-                test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             prob = model.predict_proba(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)

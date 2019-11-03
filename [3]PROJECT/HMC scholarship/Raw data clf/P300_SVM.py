@@ -32,8 +32,8 @@ total_acc = list()
 
 for isub in range(30,60):
     print(isub+1)
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
@@ -75,8 +75,8 @@ for isub in range(30,60):
     clf.fit(new_train_data, train_label)
 
     ## Test
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
@@ -89,7 +89,7 @@ for isub in range(30,60):
             test_data = test[:,:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
-                test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
             prob = clf.predict_proba(new_test_data)
             # prob = clf.predict(new_test_data)
@@ -105,8 +105,8 @@ for isub in range(30,60):
 # BS has 6 icons
 for isub in range(14):
     print(isub+1)
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
@@ -148,8 +148,8 @@ for isub in range(14):
     clf.fit(new_train_data, train_label)
 
     ## Test
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-    path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub + 1) + '_EP_test.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub + 1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
@@ -162,7 +162,7 @@ for isub in range(14):
             test_data = test[:,:,j]
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
-                test_data[:, k, :] = scalers[i].transform(test_data[:, k, :])
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
             prob = clf.predict_proba(new_test_data)
             # prob = clf.predict(new_test_data)
