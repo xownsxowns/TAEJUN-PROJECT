@@ -31,8 +31,6 @@ target_data = list()
 nontarget_data = list()
 target_label = list()
 nontarget_label = list()
-
-train_num = int(input('The number of train: '))
 ## extracting overlap channel
 from scipy import io
 path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/chlist_light.mat'
@@ -63,7 +61,7 @@ for isub in range(45,60):
 
     nch = np.shape(data['ERP'])[0]
     nlen = 250
-    ntrain = np.shape(data['ERP'])[3]
+    ntrain = 50
 
     tar_data = list()
     tar_label = list()
@@ -163,37 +161,37 @@ for test_sub in range(1,16):
 
     nch = np.shape(data['ERP'])[0]
     nlen = 250
-    ntrain = np.shape(data['ERP'])[3]
+
+    #######################
+    ntrain = 50
+    #######################
 
     tar_data = list()
     tar_label = list()
-    nontar_data = np.zeros((nch,250,3,ntrain))
+    nontar_data = list()
     nontar_label = list()
 
     for i in range(ntrain):
-        target = data['ERP'][:, 150:, data['target'][i][0] - 1, i]
+        target = data['ERP'][:,150:,data['target'][i][0]-1,i]
         tar_data.append(target)
         tar_label.append(1)
 
-        a = 0
         for j in range(4):
-            if j == (data['target'][i][0] - 1):
+            if j == (data['target'][i][0]-1):
                 continue
             else:
-                nontar_data[:,:,a,i] = (data['ERP'][:, 150:, j, i])
+                nontar_data.append(data['ERP'][:,150:,j,i])
                 nontar_label.append(0)
-                a = a + 1
 
     tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
-    nontar_data = np.reshape(nontar_data,(ntrain,nlen,3,nch))
+    nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
+
     ## 트레이닝할 개수 뽑아서 트레이닝 시키는 코드
+    train_tar_data = tar_data[:,:,totalsub_index[test_sub-1]]
+    train_tar_label = tar_label[:]
+    train_ntar_data = nontar_data[:,:,totalsub_index[test_sub-1]]
+    train_ntar_label = nontar_label[:]
 
-    train_tar_data = tar_data[:train_num,:,totalsub_index[test_sub-1]]
-    train_tar_label = tar_label[:train_num]
-    train_ntar_data = nontar_data[:train_num,:,:,totalsub_index[test_sub-1]]
-    train_ntar_label = nontar_label[:train_num] * 3
-
-    train_ntar_data = np.reshape(train_ntar_data, ((np.shape(train_ntar_data)[0]*np.shape(train_ntar_data)[2]), np.shape(train_ntar_data)[1], np.shape(train_ntar_data)[3]))
     train_tl_data = np.concatenate((train_tar_data, train_ntar_data))
     train_tl_label = np.concatenate((train_tar_label, train_ntar_label))
 
@@ -228,5 +226,5 @@ for test_sub in range(1,16):
     print(total_acc)
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_TL'+str(train_num)+'.csv'
+filename = 'P300_Result_CNN_TL'+str(ntrain)+'.csv'
 df.to_csv(filename)
