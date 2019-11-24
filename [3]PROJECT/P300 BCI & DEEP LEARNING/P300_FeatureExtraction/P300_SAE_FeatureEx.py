@@ -23,8 +23,8 @@ import pandas as pd
 import numpy as np
 import random
 from keras import optimizers
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, AveragePooling2D
+from keras.models import Sequential, Model
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, Input
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -76,29 +76,44 @@ for isub in range(30,60):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-    train_data = np.expand_dims(train_data, axis=1)
-    vali_data = np.expand_dims(vali_data, axis=1)
 
-    ## Build Stacked AutoEncoder
-    model = Sequential()
-    model.add(Conv2D(filters=32, kernel_size=(1, nch) , input_shape=(1, nlen, nch), data_format='channels_first'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Conv2D(filters=64, kernel_size=(20, 1)))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    # model.add(MaxPooling2D(pool_size=2, data_format='channels_first'))
-    model.add(Flatten())
-    model.add(Dense(32))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', W_regularizer=l2(0.01)))
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
-    early_stopping = EarlyStopping(patience=5)
+    train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1]*train_data.shape[2]))
+    vali_data = np.reshape(vali_data, (vali_data.shape[0], vali_data.shape[1]*vali_data.shape[2]))
+
+    input_img = Input(shape=(7000,))
+
+    encoded = Dense(units=5000, activation='tanh')(input_img)
+    # encoded = Dense(units=3000, activation='relu')(encoded)
+    encoded = Dense(units=1000, activation='tanh')(encoded)
+    # encoded = Dense(units=500, activation='relu')(encoded)
+    # decoded = Dense(units=1000, activation='relu')(encoded)
+    # decoded = Dense(units=3000, activation='relu')(decoded)
+    decoded = Dense(units=5000, activation='tanh')(encoded)
+    decoded = Dense(units=7000, activation='sigmoid')(decoded)
+
+    autoencoder = Model(input_img, decoded)
+    encoder = Model(input_img, encoded)
+
+    autoencoder.summary()
+    autoencoder.compile(optimizer='adadelta', loss='mean_squared_error')
+    autoencoder.fit(train_data,train_data, epochs=200, batch_size=30, shuffle=True, validation_data=(vali_data, vali_data))
+
+    for layer in autoencoder.layers[:-3]:
+        layer.trainable = False
+
+    autoencoder.compile(loss='mean_squared_error', optimizer='adadelta', metrics=['accuracy'])
+
+    new_input = autoencoder.input
+    hidden_layer = autoencoder.layers[-3].output
+    dense1 = Dense(300, activation='relu')(hidden_layer)
+    dense2 = Dense(100, activation='relu')(dense1)
+    new_output = Dense(1, activation='sigmoid')(dense2)
+    model = Model(new_input, new_output)
+    model.summary()
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    early_stopping = EarlyStopping(patience=10)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
-
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -116,8 +131,8 @@ for isub in range(30,60):
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-            test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            test_data = np.reshape(test_data, (test_data.shape[0], test_data.shape[1]*test_data.shape[2]))
+            prob = model.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
@@ -130,8 +145,8 @@ for isub in range(30,60):
 
 for isub in range(14):
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
@@ -171,27 +186,42 @@ for isub in range(14):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-    train_data = np.expand_dims(train_data, axis=1)
-    vali_data = np.expand_dims(vali_data, axis=1)
+    train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1]*train_data.shape[2]))
+    vali_data = np.reshape(vali_data, (vali_data.shape[0], vali_data.shape[1]*vali_data.shape[2]))
 
-    ## Build Stacked AutoEncoder
-    model = Sequential()
-    model.add(Conv2D(filters=32, kernel_size=(1, nch) , input_shape=(1, nlen, nch), data_format='channels_first'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Conv2D(filters=64, kernel_size=(20, 1)))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    # model.add(MaxPooling2D(pool_size=2, data_format='channels_first'))
-    model.add(Flatten())
-    model.add(Dense(32))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', W_regularizer=l2(0.01)))
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
-    early_stopping = EarlyStopping(patience=5)
+    input_img = Input(shape=(train_data.shape[1]*train_data.shape[2],))
+
+    encoded = Dense(units=5000, activation='tanh')(input_img)
+    # encoded = Dense(units=3000, activation='relu')(encoded)
+    encoded = Dense(units=1000, activation='tanh')(encoded)
+    # encoded = Dense(units=500, activation='relu')(encoded)
+    # decoded = Dense(units=1000, activation='relu')(encoded)
+    # decoded = Dense(units=3000, activation='relu')(decoded)
+    decoded = Dense(units=5000, activation='tanh')(encoded)
+    decoded = Dense(units=(train_data.shape[1]*train_data.shape[2]), activation='sigmoid')(decoded)
+
+    autoencoder2 = Model(input_img, decoded)
+    encoder = Model(input_img, encoded)
+
+    autoencoder2.summary()
+    autoencoder2.compile(optimizer='adadelta', loss='mean_squared_error')
+    autoencoder2.fit(train_data,train_data, epochs=200, batch_size=30, shuffle=True, validation_data=(vali_data, vali_data))
+
+    for layer in autoencoder2.layers[:-3]:
+        layer.trainable = False
+
+    autoencoder2.compile(loss='mean_squared_error', optimizer='adadelta', metrics=['accuracy'])
+
+    new_input = autoencoder2.input
+    hidden_layer = autoencoder2.layers[-3].output
+    dense1 = Dense(300, activation='relu')(hidden_layer)
+    dense2 = Dense(100, activation='relu')(dense1)
+    new_output = Dense(1, activation='sigmoid')(dense2)
+    model = Model(new_input, new_output)
+    model.summary()
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    early_stopping = EarlyStopping(patience=10)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
     ## classifier
@@ -212,8 +242,8 @@ for isub in range(14):
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-            test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            test_data = np.reshape(test_data, (test_data.shape[0], test_data.shape[1] * test_data.shape[2]))
+            prob = model.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
@@ -225,5 +255,5 @@ for isub in range(14):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_BN.csv'
+filename = 'P300_Result_SAE.csv'
 df.to_csv(filename)
