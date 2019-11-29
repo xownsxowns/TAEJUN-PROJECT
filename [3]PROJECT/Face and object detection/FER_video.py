@@ -7,17 +7,17 @@ np.set_printoptions(precision=2)
 
 # class 0:Anger, 1:Disgust, 2:Fear, 3:Happy, 4:Neutral, 5:Sad, 6:Surprise
 
-class_name = ['Anger', 'Disgust','Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
-model = load_model('E:/GitHub/Python_project/[3]PROJECT/Face and object detection/model_resnet.h5')
+model = load_model('E:/GitHub/Python_project/[3]PROJECT/Face and object detection/model2.h5')
 
 # setting video range
 start_time = 1000
 end_time = 6000
 
 # video_path = 'E:/[2] 연구/[3] Facial/test_video.avi'
-video_path = 'E:/DEAP dataset/face_video/s06/s06_trial01.avi'
+video_path = 'E:/DEAP dataset/face_video/s06/s06_trial02.avi'
 
 video_capture = cv2.VideoCapture(video_path)
 video_capture.get(cv2.CAP_PROP_FPS)
@@ -83,8 +83,8 @@ while True:
 # When everything is done, release the capture
 score = np.sum(score_collect, axis=0) / np.size(score_collect, axis=0)
 score = (np.array(score)*100).tolist()
-print('Anger:{:0.2f}%, Disgust:{:0.2f}%, Fear:{:0.2f}%, Happy:{:0.2f}%, Neutral:{:0.2f}%, Sad:{:0.2f}%, Surprise:{:0.2f}%'.format(
-    score[0],score[1],score[2],score[3],score[4],score[5],score[6]))
+print('Anger:{:0.2f}%, Fear:{:0.2f}%, Happy:{:0.2f}%, Neutral:{:0.2f}%, Sad:{:0.2f}%, Surprise:{:0.2f}%'.format(
+    score[0],score[1],score[2],score[3],score[4],score[5]))
 print(np.shape(score))
 
 video_capture.release()

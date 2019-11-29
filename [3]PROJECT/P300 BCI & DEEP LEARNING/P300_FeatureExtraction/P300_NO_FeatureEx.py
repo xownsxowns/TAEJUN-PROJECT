@@ -29,6 +29,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 
 total_acc = list()
+np.random.seed(0)
 
 for isub in range(30,60):
     print(isub+1)
@@ -71,7 +72,7 @@ for isub in range(30,60):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
 
     new_train_data = train_data.reshape((train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
-    clf = SVC(probability=True, kernel='sigmoid')
+    clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf.fit(new_train_data, train_label)
 
     ## Test
@@ -144,7 +145,7 @@ for isub in range(14):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
 
     new_train_data = train_data.reshape((train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
-    clf = SVC(probability=True, kernel='sigmoid')
+    clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf.fit(new_train_data, train_label)
 
     ## Test
@@ -176,5 +177,5 @@ for isub in range(14):
     print(total_acc)
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_SVM_sigmoid.csv'
+filename = 'P300_Result_NO.csv'
 df.to_csv(filename)

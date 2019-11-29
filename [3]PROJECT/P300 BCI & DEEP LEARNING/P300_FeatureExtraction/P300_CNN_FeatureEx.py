@@ -67,7 +67,7 @@ for isub in range(30,60):
     train_vali_data = np.concatenate((tar_data, nontar_data))
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
-    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
 
     ## standardScaler 해줘보자
     scalers = {}
@@ -99,6 +99,8 @@ for isub in range(30,60):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
+    model_name = 'model_CNN_train'+str(isub+1)+'.h5'
+    model.save(model_name)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -130,7 +132,7 @@ for isub in range(30,60):
 
 for isub in range(14):
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
@@ -162,7 +164,7 @@ for isub in range(14):
     train_vali_data = np.concatenate((tar_data, nontar_data))
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
-    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
 
     ## standardScaler 해줘보자
     scalers = {}
@@ -194,11 +196,13 @@ for isub in range(14):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
+    model_name = 'model_BS_CNN_train'+str(isub+1)+'.h5'
+    model.save(model_name)
     ## classifier
 
     ## Test
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
@@ -225,5 +229,5 @@ for isub in range(14):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_BN.csv'
+filename = 'P300_Result_CNN.csv'
 df.to_csv(filename)

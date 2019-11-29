@@ -18,17 +18,20 @@
 #    ERP : [channel x time x stimulus type x block] (training: 50 block, test: 30 block)
 #    target : [block x 1] target stimulus of each block
 
-from scipy import io, signal
+from scipy import io
 import pandas as pd
 import numpy as np
 import random
 from keras import optimizers
-from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, Input
+from keras.models import Model
+from keras.layers import Dense, Input
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
+import keras
+import gc
+import keras.backend as K
 
 np.random.seed(0)
 total_acc = list()
@@ -67,7 +70,7 @@ for isub in range(30,60):
     train_vali_data = np.concatenate((tar_data, nontar_data))
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
-    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
 
     ## standardScaler 해줘보자
     scalers = {}
@@ -80,23 +83,23 @@ for isub in range(30,60):
     train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1]*train_data.shape[2]))
     vali_data = np.reshape(vali_data, (vali_data.shape[0], vali_data.shape[1]*vali_data.shape[2]))
 
-    input_img = Input(shape=(7000,))
+    input_img = Input(shape=(train_data.shape[1],))
 
-    encoded = Dense(units=5000, activation='tanh')(input_img)
+    encoded = Dense(units=3000, activation='tanh')(input_img)
     # encoded = Dense(units=3000, activation='relu')(encoded)
-    encoded = Dense(units=1000, activation='tanh')(encoded)
+    encoded = Dense(units=500, activation='tanh')(encoded)
     # encoded = Dense(units=500, activation='relu')(encoded)
     # decoded = Dense(units=1000, activation='relu')(encoded)
     # decoded = Dense(units=3000, activation='relu')(decoded)
-    decoded = Dense(units=5000, activation='tanh')(encoded)
-    decoded = Dense(units=7000, activation='sigmoid')(decoded)
+    decoded = Dense(units=3000, activation='tanh')(encoded)
+    decoded = Dense(units=train_data.shape[1], activation='sigmoid')(decoded)
 
     autoencoder = Model(input_img, decoded)
     encoder = Model(input_img, encoded)
 
     autoencoder.summary()
     autoencoder.compile(optimizer='adadelta', loss='mean_squared_error')
-    autoencoder.fit(train_data,train_data, epochs=200, batch_size=30, shuffle=True, validation_data=(vali_data, vali_data))
+    autoencoder.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data))
 
     for layer in autoencoder.layers[:-3]:
         layer.trainable = False
@@ -105,15 +108,21 @@ for isub in range(30,60):
 
     new_input = autoencoder.input
     hidden_layer = autoencoder.layers[-3].output
+
+    del autoencoder
+    gc.collect()
+
     dense1 = Dense(300, activation='relu')(hidden_layer)
     dense2 = Dense(100, activation='relu')(dense1)
-    new_output = Dense(1, activation='sigmoid')(dense2)
+    new_output = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))(dense2)
     model = Model(new_input, new_output)
     model.summary()
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
+    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
     early_stopping = EarlyStopping(patience=10)
-    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+    model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+
+    model_name = 'model_SAE_train'+str(isub+1)+'.h5'
+    model.save(model_name)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -142,11 +151,13 @@ for isub in range(30,60):
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
     print(np.mean(total_acc))
+    K.clear_session()
+
 
 for isub in range(14):
     print(isub)
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
@@ -177,7 +188,7 @@ for isub in range(14):
     train_vali_data = np.concatenate((tar_data, nontar_data))
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
-    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
 
     ## standardScaler 해줘보자
     scalers = {}
@@ -189,23 +200,23 @@ for isub in range(14):
     train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1]*train_data.shape[2]))
     vali_data = np.reshape(vali_data, (vali_data.shape[0], vali_data.shape[1]*vali_data.shape[2]))
 
-    input_img = Input(shape=(train_data.shape[1]*train_data.shape[2],))
+    input_img = Input(shape=(train_data.shape[1],))
 
-    encoded = Dense(units=5000, activation='tanh')(input_img)
+    encoded = Dense(units=3000, activation='tanh')(input_img)
     # encoded = Dense(units=3000, activation='relu')(encoded)
-    encoded = Dense(units=1000, activation='tanh')(encoded)
+    encoded = Dense(units=500, activation='tanh')(encoded)
     # encoded = Dense(units=500, activation='relu')(encoded)
     # decoded = Dense(units=1000, activation='relu')(encoded)
     # decoded = Dense(units=3000, activation='relu')(decoded)
-    decoded = Dense(units=5000, activation='tanh')(encoded)
-    decoded = Dense(units=(train_data.shape[1]*train_data.shape[2]), activation='sigmoid')(decoded)
+    decoded = Dense(units=3000, activation='tanh')(encoded)
+    decoded = Dense(units=train_data.shape[1], activation='sigmoid')(decoded)
 
     autoencoder2 = Model(input_img, decoded)
     encoder = Model(input_img, encoded)
 
     autoencoder2.summary()
     autoencoder2.compile(optimizer='adadelta', loss='mean_squared_error')
-    autoencoder2.fit(train_data,train_data, epochs=200, batch_size=30, shuffle=True, validation_data=(vali_data, vali_data))
+    autoencoder2.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data))
 
     for layer in autoencoder2.layers[:-3]:
         layer.trainable = False
@@ -214,21 +225,27 @@ for isub in range(14):
 
     new_input = autoencoder2.input
     hidden_layer = autoencoder2.layers[-3].output
+
+    del autoencoder2
+    gc.collect()
+
     dense1 = Dense(300, activation='relu')(hidden_layer)
     dense2 = Dense(100, activation='relu')(dense1)
-    new_output = Dense(1, activation='sigmoid')(dense2)
+    new_output = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))(dense2)
     model = Model(new_input, new_output)
     model.summary()
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
 
     early_stopping = EarlyStopping(patience=10)
-    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+    model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
+    model_name = 'model_BS_SAE_train'+str(isub+1)+'.h5'
+    model.save(model_name)
     ## classifier
 
     ## Test
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
@@ -253,7 +270,8 @@ for isub in range(14):
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
     print(np.mean(total_acc))
+    K.clear_session()
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_SAE.csv'
+filename = 'P300_Result2_SAE.csv'
 df.to_csv(filename)
