@@ -35,9 +35,9 @@ total_acc = list()
 
 for isub in range(30,60):
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -76,23 +76,26 @@ for isub in range(30,60):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-    train_data = np.expand_dims(train_data, axis=1)
-    vali_data = np.expand_dims(vali_data, axis=1)
+    train_data = np.expand_dims(train_data, axis=3)
+    train_data = np.transpose(train_data, (0,2,1,3))
+    vali_data = np.expand_dims(vali_data, axis=3)
+    vali_data = np.transpose(vali_data, (0,2,1,3))
 
     ## Build Stacked AutoEncoder
     model = Sequential()
-    model.add(Conv2D(filters=32, kernel_size=(1, nch) , input_shape=(1, nlen, nch), data_format='channels_first'))
+    model.add(Conv2D(filters=32, kernel_size=(1, 1) , input_shape=(nch, nlen, 1), data_format='channels_last',padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Conv2D(filters=64, kernel_size=(10, 1)))
+    model.add(MaxPooling2D(pool_size=(2,1), data_format='channels_last'))
+    model.add(Conv2D(filters=64, kernel_size=(1, 10), padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(2,1), data_format='channels_first'))
+    model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_last'))
     model.add(Flatten())
-    model.add(Dense(32))
+    model.add(Dense(8))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
+    model.add(Dropout(0.2))
     model.add(Dense(1, activation='sigmoid', W_regularizer=l2(0.01)))
     model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
     print(model.summary())
@@ -103,9 +106,9 @@ for isub in range(30,60):
     # model.save(model_name)
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -118,7 +121,8 @@ for isub in range(30,60):
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-            test_data = np.expand_dims(test_data, axis=1)
+            test_data = np.expand_dims(test_data, axis=3)
+            test_data = np.transpose(test_data, (0, 2, 1, 3))
             prob = model.predict_proba(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
@@ -134,7 +138,7 @@ for isub in range(14):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -203,7 +207,7 @@ for isub in range(14):
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
