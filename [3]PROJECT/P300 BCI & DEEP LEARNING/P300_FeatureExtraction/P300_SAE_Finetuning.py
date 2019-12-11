@@ -24,11 +24,12 @@ import numpy as np
 import random
 from keras import optimizers
 from keras.models import Model
-from keras.layers import Dense, Input
+from keras.layers import Dense, Input, BatchNormalization, Dropout
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
+from keras.optimizers import Adam
 import keras
 import gc
 import keras.backend as K
@@ -36,7 +37,7 @@ import keras.backend as K
 np.random.seed(0)
 total_acc = list()
 
-for isub in range(30,60):
+for isub in range(50,60):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
@@ -78,45 +79,45 @@ for isub in range(30,60):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-
     train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1]*train_data.shape[2]))
     vali_data = np.reshape(vali_data, (vali_data.shape[0], vali_data.shape[1]*vali_data.shape[2]))
 
     input_img = Input(shape=(train_data.shape[1],))
 
-    encoded = Dense(units=3000, activation='tanh')(input_img)
+    encoded = Dense(units=1000, activation='tanh')(input_img)
     encoded = Dense(units=500, activation='tanh')(encoded)
-    decoded = Dense(units=3000, activation='tanh')(encoded)
-    decoded = Dense(units=train_data.shape[1], activation='sigmoid')(decoded)
+    decoded = Dense(units=1000, activation='tanh')(encoded)
+    decoded = Dense(units=train_data.shape[1], activation='tanh')(decoded)
 
     autoencoder = Model(input_img, decoded)
     encoder = Model(input_img, encoded)
 
+    # sgd1 = SGD(lr=.1, decay=0.001, momentum=0.9, nesterov=True)
     autoencoder.summary()
     autoencoder.compile(optimizer='adadelta', loss='mean_squared_error')
-    autoencoder.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data))
+    early_stopping = EarlyStopping(patience=5)
+    autoencoder.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data), callbacks=[early_stopping])
 
-    for layer in autoencoder.layers[:-3]:
+    for layer in autoencoder.layers[:-2]:
         layer.trainable = False
 
-    autoencoder.compile(loss='mean_squared_error', optimizer='adadelta', metrics=['accuracy'])
-
     new_input = autoencoder.input
-    hidden_layer = autoencoder.layers[-3].output
-
-    del autoencoder
-    gc.collect()
-
-    dense1 = Dense(300, activation='relu')(hidden_layer)
-    dense2 = Dense(100, activation='relu')(dense1)
+    dense1 = Dense(100, activation='relu')(encoded)
+    dense2 = Dense(50, activation='relu')(dense1)
     new_output = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))(dense2)
+
     model = Model(new_input, new_output)
     model.summary()
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    early_stopping = EarlyStopping(patience=10)
-    model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'model_SAE_train'+str(isub+1)+'.h5'
+    model.layers[1].set_weights(autoencoder.layers[1].get_weights())
+    model.layers[2].set_weights(autoencoder.layers[2].get_weights())
+
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.01, amsgrad=False)
+    model.compile(loss='hinge', optimizer=adam, metrics=['accuracy'])
+    early_stopping2 = EarlyStopping(patience=10)
+    model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping2])
+
+    model_name = 'E:/[9] 졸업논문/model/model_SAE_train'+str(isub+1)+'.h5'
     model.save(model_name)
 
     ## Test
@@ -195,45 +196,41 @@ for isub in range(14):
 
     input_img = Input(shape=(train_data.shape[1],))
 
-    encoded = Dense(units=3000, activation='tanh')(input_img)
-    # encoded = Dense(units=3000, activation='relu')(encoded)
+    encoded = Dense(units=1000, activation='tanh')(input_img)
     encoded = Dense(units=500, activation='tanh')(encoded)
-    # encoded = Dense(units=500, activation='relu')(encoded)
-    # decoded = Dense(units=1000, activation='relu')(encoded)
-    # decoded = Dense(units=3000, activation='relu')(decoded)
-    decoded = Dense(units=3000, activation='tanh')(encoded)
-    decoded = Dense(units=train_data.shape[1], activation='sigmoid')(decoded)
+    decoded = Dense(units=1000, activation='tanh')(encoded)
+    decoded = Dense(units=train_data.shape[1], activation='tanh')(decoded)
 
     autoencoder2 = Model(input_img, decoded)
     encoder = Model(input_img, encoded)
 
+    # sgd1 = SGD(lr=.1, decay=0.001, momentum=0.9, nesterov=True)
     autoencoder2.summary()
     autoencoder2.compile(optimizer='adadelta', loss='mean_squared_error')
-    autoencoder2.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data))
+    early_stopping = EarlyStopping(patience=5)
+    autoencoder2.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data), callbacks=[early_stopping])
 
-    for layer in autoencoder2.layers[:-3]:
+    for layer in autoencoder2.layers[:-2]:
         layer.trainable = False
 
-    autoencoder2.compile(loss='mean_squared_error', optimizer='adadelta', metrics=['accuracy'])
-
     new_input = autoencoder2.input
-    hidden_layer = autoencoder2.layers[-3].output
-
-    del autoencoder2
-    gc.collect()
-
-    dense1 = Dense(300, activation='relu')(hidden_layer)
-    dense2 = Dense(100, activation='relu')(dense1)
+    dense1 = Dense(100, activation='relu')(encoded)
+    dense2 = Dense(50, activation='relu')(dense1)
     new_output = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))(dense2)
-    model = Model(new_input, new_output)
-    model.summary()
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
 
-    early_stopping = EarlyStopping(patience=10)
-    model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+    model2 = Model(new_input, new_output)
+    model2.summary()
 
-    model_name = 'model_BS_SAE_train'+str(isub+1)+'.h5'
-    model.save(model_name)
+    model2.layers[1].set_weights(autoencoder2.layers[1].get_weights())
+    model2.layers[2].set_weights(autoencoder2.layers[2].get_weights())
+
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.01, amsgrad=False)
+    model2.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
+    early_stopping2 = EarlyStopping(patience=10)
+    model2.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping2])
+
+    model_name = 'E:/[9] 졸업논문/model/model_BS_SAE_train'+str(isub+1)+'.h5'
+    model2.save(model_name)
     ## classifier
 
     ## Test
@@ -252,7 +249,7 @@ for isub in range(14):
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             test_data = np.reshape(test_data, (test_data.shape[0], test_data.shape[1] * test_data.shape[2]))
-            prob = model.predict(test_data)
+            prob = model2.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
@@ -265,5 +262,5 @@ for isub in range(14):
     K.clear_session()
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result2_SAE.csv'
+filename = 'P300_Result_SAE_FE2.csv'
 df.to_csv(filename)
