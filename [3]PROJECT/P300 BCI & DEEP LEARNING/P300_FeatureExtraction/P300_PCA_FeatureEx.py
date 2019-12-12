@@ -33,7 +33,7 @@ total_acc = list()
 np.random.seed(0)
 
 for isub in range(30,60):
-    pca = PCA(n_components=0.90, svd_solver='full')
+    pca = PCA(n_components=0.95, svd_solver='full')
     print(isub+1)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
@@ -110,7 +110,7 @@ for isub in range(30,60):
 
 # BS has 6 icons
 for isub in range(14):
-    pca = PCA(n_components=0.90, svd_solver='full')
+    pca = PCA(n_components=0.95, svd_solver='full')
     print(isub+1)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'

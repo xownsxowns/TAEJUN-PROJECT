@@ -30,8 +30,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
 
+# parameter setting
 np.random.seed(0)
 total_acc = list()
+
+ch_kernel_size = (1, 5)
+dp_kernel_size = (10, 1)
 
 for isub in range(30,60):
     print(isub)
@@ -81,25 +85,28 @@ for isub in range(30,60):
 
     ## Build Stacked AutoEncoder
     model = Sequential()
-    model.add(Conv2D(filters=32, kernel_size=(1, nch) , input_shape=(1, nlen, nch), data_format='channels_first'))
+    # channel convolution
+    model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Conv2D(filters=64, kernel_size=(20, 1)))
+    model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
+    # data point convolution
+    model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    # model.add(MaxPooling2D(pool_size=2, data_format='channels_first'))
+    model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
     model.add(Flatten())
     model.add(Dense(32))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', W_regularizer=l2(0.01)))
+    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
     model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
     print(model.summary())
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'model_CNN_train'+str(isub+1)+'.h5'
+    model_name = 'E:/[9] 졸업논문/model/model_CNN_train' + str(isub + 1) + '.h5'
     model.save(model_name)
 
     ## Test
@@ -178,25 +185,28 @@ for isub in range(14):
 
     ## Build Stacked AutoEncoder
     model = Sequential()
-    model.add(Conv2D(filters=32, kernel_size=(1, nch) , input_shape=(1, nlen, nch), data_format='channels_first'))
+    # channel convolution
+    model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Conv2D(filters=64, kernel_size=(20, 1)))
+    model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
+    # data point convolution
+    model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    # model.add(MaxPooling2D(pool_size=2, data_format='channels_first'))
+    model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
     model.add(Flatten())
     model.add(Dense(32))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', W_regularizer=l2(0.01)))
+    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
     model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
     print(model.summary())
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'model_BS_CNN_train'+str(isub+1)+'.h5'
+    model_name = 'E:/[9] 졸업논문/model/model_BS_CNN_train' + str(isub + 1) + '.h5'
     model.save(model_name)
     ## classifier
 
