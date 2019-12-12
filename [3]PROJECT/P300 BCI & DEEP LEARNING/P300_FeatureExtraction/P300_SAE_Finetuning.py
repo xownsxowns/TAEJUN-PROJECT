@@ -37,7 +37,7 @@ import keras.backend as K
 np.random.seed(0)
 total_acc = list()
 
-for isub in range(50,60):
+for isub in range(30,60):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
