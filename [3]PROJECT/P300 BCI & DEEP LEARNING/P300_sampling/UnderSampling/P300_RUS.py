@@ -112,7 +112,7 @@ for isub in range(30,60):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/model_CNN_rus_train' + str(isub + 1) + '.h5'
+    model_name = 'E:/[9] 졸업논문/model/undersampling/model_CNN_rus_train' + str(isub + 1) + '.h5'
     model.save(model_name)
 
     ## Test
@@ -218,7 +218,7 @@ for isub in range(14):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/model_BS_CNN_rus_train' + str(isub + 1) + '.h5'
+    model_name = 'E:/[9] 졸업논문/model/undersampling/model_BS_CNN_rus_train' + str(isub + 1) + '.h5'
     model.save(model_name)
     ## classifier
 

@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 np.random.seed(0)
-path = 'J:/bike-sharing-dataset/data_regression.mat'
+path = '/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/Multivariate analysis/data_regression.mat'
 data = io.loadmat(path)
 
 X_sub = data['X_sub']
