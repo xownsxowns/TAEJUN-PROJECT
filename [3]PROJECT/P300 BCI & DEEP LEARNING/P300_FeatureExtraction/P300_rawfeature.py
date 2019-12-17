@@ -1,4 +1,3 @@
-
 ## P300 Classification
 ## SVM
 
@@ -25,7 +24,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+
 total_acc = list()
+train_acc = list()
+
+np.random.seed(0)
 
 for isub in range(30,60):
     print(isub+1)
@@ -100,6 +103,8 @@ for isub in range(30,60):
     clf = SVC(probability=True, kernel='sigmoid')
     clf.fit(train_data, train_label)
 
+    train_acc.append(clf.score(train_data, train_label))
+    print(train_acc)
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
@@ -132,7 +137,6 @@ for isub in range(30,60):
                             local_peak_test[itrial, ich] = testt[sorted_index[i]]
                             break
             prob = clf.predict_proba(local_peak_test)
-            # prob = clf.predict(new_test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmin(total_prob)
         if data2['target'][ii][0] == (predicted_label+1):
@@ -141,6 +145,7 @@ for isub in range(30,60):
     total_acc.append((corr_ans/ntest)*100)
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
+    print(np.mean(total_acc))
 
 # BS has 6 icons
 for isub in range(14):
