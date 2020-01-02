@@ -34,10 +34,10 @@ np.random.seed(0)
 total_acc = list()
 
 for isub in range(30,60):
-    print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    print(isub+1)
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -67,7 +67,7 @@ for isub in range(30,60):
     train_vali_data = np.concatenate((tar_data, nontar_data))
     train_vali_label = np.concatenate((tar_label, nontar_label))
 
-    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.15, random_state=42)
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
 
     ## standardScaler 해줘보자
     scalers = {}
@@ -76,65 +76,63 @@ for isub in range(30,60):
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-    train_data = np.expand_dims(train_data, axis=3)
-    vali_data = np.expand_dims(vali_data, axis=3)
+    train_data = np.expand_dims(train_data, axis=1)
+    vali_data = np.expand_dims(vali_data, axis=1)
 
     # ENCODER
-    inp = Input((250, 28, 1))
-    x = Conv2D(16, 3, 3, activation='relu', border_mode='same')(inp)  # nb_filter, nb_row, nb_col
-    x = MaxPooling2D((2, 2), border_mode='same')(x)
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same')(x)
-    x = MaxPooling2D((5, 2), border_mode='same')(x)
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same')(x)
-    encoded = MaxPooling2D((5, 7), border_mode='same')(x)
+    inp = Input((1, 250, 28))
+    x = Conv2D(16, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(inp)  # nb_filter, nb_row, nb_col
+    x = MaxPooling2D((2, 2), border_mode='same', data_format='channels_first')(x)
+    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
+    x = MaxPooling2D((5, 2), border_mode='same', data_format='channels_first')(x)
+    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
+    encoded = MaxPooling2D((5, 7), border_mode='same', data_format='channels_first')(x)
 
     # DECODER
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same')(encoded)
-    x = UpSampling2D((5, 7))(x)
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same')(x)
-    x = UpSampling2D((5, 2))(x)
+    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(encoded)
+    x = UpSampling2D((5, 7), data_format='channels_first')(x)
+    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
+    x = UpSampling2D((5, 2), data_format='channels_first')(x)
 
     # In original tutorial, border_mode='same' was used.
     # then the shape of 'decoded' will be 32 x 32, instead of 28 x 28
     # x = Convolution2D(16, 3, 3, activation='relu', border_mode='same')(x)
-    x = Conv2D(16, 3, 3, activation='relu', border_mode='same')(x)
-    x = UpSampling2D((2, 2))(x)
-    decoded = Conv2D(1, 5, 5, activation='sigmoid', border_mode='same')(x)
+    x = Conv2D(16, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
+    x = UpSampling2D((2, 2), data_format='channels_first')(x)
+    decoded = Conv2D(1, 5, 5, activation='sigmoid', border_mode='same', data_format='channels_first')(x)
 
     ae = Model(inp, decoded)
     ae.compile(optimizer='adadelta', loss='mean_squared_error')
     ae.summary()
     ae.fit(train_data, train_data, epochs=200, batch_size=20, validation_data=(vali_data, vali_data))
 
-
-
-    # ## Test
+    ## Test
     # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    # # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
-    # # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    # data2 = io.loadmat(path)
-    # corr_ans = 0
-    # ntest = np.shape(data2['ERP'])[3]
-    #
-    # for i in range(ntest):
-    #     test = data2['ERP'][:,150:,:,i]
-    #     total_prob = list()
-    #     for j in range(4):
-    #         test_data = test[:,:,j]
-    #         test_data = np.reshape(test_data, (1,nlen,nch))
-    #         for k in range(test_data.shape[1]):
-    #             test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-    #         test_data = np.expand_dims(test_data, axis=1)
-    #         prob = model.predict_proba(test_data)
-    #         total_prob.append(prob[0][0])
-    #     predicted_label = np.argmax(total_prob)
-    #     if data2['target'][i][0] == (predicted_label+1):
-    #         corr_ans += 1
-    #
-    # total_acc.append((corr_ans/ntest)*100)
-    # print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
-    # print(total_acc)
-    # print(np.mean(total_acc))
+    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    data2 = io.loadmat(path)
+    corr_ans = 0
+    ntest = np.shape(data2['ERP'])[3]
+
+    for i in range(ntest):
+        test = data2['ERP'][:,150:,:,i]
+        total_prob = list()
+        for j in range(4):
+            test_data = test[:,:,j]
+            test_data = np.reshape(test_data, (1,nlen,nch))
+            for k in range(test_data.shape[1]):
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
+            test_data = np.expand_dims(test_data, axis=1)
+            prob = model.predict_proba(test_data)
+            total_prob.append(prob[0][0])
+        predicted_label = np.argmax(total_prob)
+        if data2['target'][i][0] == (predicted_label+1):
+            corr_ans += 1
+
+    total_acc.append((corr_ans/ntest)*100)
+    print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
+    print(total_acc)
+    print(np.mean(total_acc))
 
 # for isub in range(14):
 #     print(isub)

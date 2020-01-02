@@ -39,8 +39,8 @@ total_acc = list()
 
 for isub in range(30,60):
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -117,12 +117,13 @@ for isub in range(30,60):
     early_stopping2 = EarlyStopping(patience=10)
     model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping2])
 
-    model_name = 'E:/[9] 졸업논문/model/model_SAE_train'+str(isub+1)+'.h5'
-    model.save(model_name)
+    # model_name = 'E:/[9] 졸업논문/model/model_SAE_train'+str(isub+1)+'.h5'
+    # model.save(model_name)
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -151,8 +152,9 @@ for isub in range(30,60):
 
 for isub in range(14):
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub + 1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -229,13 +231,14 @@ for isub in range(14):
     early_stopping2 = EarlyStopping(patience=10)
     model2.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping2])
 
-    model_name = 'E:/[9] 졸업논문/model/model_BS_SAE_train'+str(isub+1)+'.h5'
-    model2.save(model_name)
+    # model_name = 'E:/[9] 졸업논문/model/model_BS_SAE_train'+str(isub+1)+'.h5'
+    # model2.save(model_name)
     ## classifier
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub + 1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
