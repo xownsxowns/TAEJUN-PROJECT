@@ -29,10 +29,13 @@ from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
+from sklearn.metrics import accuracy_score
 
 # parameter setting
-np.random.seed(0)
 total_acc = list()
+train_score = list()
+train_score_prob = list()
+np.random.seed(0)
 
 ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)
@@ -108,6 +111,26 @@ for isub in range(30,60):
 
     model_name = 'E:/[9] 졸업논문/model/model_CNN_train' + str(isub + 1) + '.h5'
     model.save(model_name)
+
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    train_score.append(training_score)
+
+    ## prob으로 했을 때
+    tarr = train_data[:50,:,:]
+    ntarr = train_data[50:,:,:]
+    corr_train_ans = 0
+
+    for aa in range(50):
+        tarr_data = tarr[aa,:,:]
+        ntarr_data = ntarr[3*aa:3*(aa+1),:,:]
+        tarr_data = np.expand_dims(tarr_data, axis=0)
+        ttrain_data = np.concatenate((tarr_data, ntarr_data))
+        probb = model.predict_proba(ttrain_data)
+        predicted_tar = np.argmax(probb)
+        if predicted_tar == 0:
+            corr_train_ans += 1
+    train_score_prob.append((corr_train_ans/50)*100)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -208,7 +231,26 @@ for isub in range(14):
 
     model_name = 'E:/[9] 졸업논문/model/model_BS_CNN_train' + str(isub + 1) + '.h5'
     model.save(model_name)
-    ## classifier
+
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    train_score.append(training_score)
+
+    ## prob으로 했을 때
+    tarr = train_data[:50, :, :]
+    ntarr = train_data[50:, :, :]
+    corr_train_ans = 0
+
+    for aa in range(50):
+        tarr_data = tarr[aa, :, :]
+        ntarr_data = ntarr[5 * aa:5 * (aa + 1), :, :]
+        tarr_data = np.expand_dims(tarr_data, axis=0)
+        ttrain_data = np.concatenate((tarr_data, ntarr_data))
+        probb = model.predict_proba(ttrain_data)
+        predicted_tar = np.argmax(probb)
+        if predicted_tar == 0:
+            corr_train_ans += 1
+    train_score_prob.append((corr_train_ans / 50) * 100)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
@@ -241,3 +283,11 @@ for isub in range(14):
 df = pd.DataFrame(total_acc)
 filename = 'P300_Result_CNN.csv'
 df.to_csv(filename)
+
+df2 = pd.DataFrame(train_score)
+filename = 'P300_Result_CNN_trainscore.csv'
+df2.to_csv(filename)
+
+df3 = pd.DataFrame(train_score_prob)
+filename = 'P300_Result_CNN_trainscore_prob.csv'
+df3.to_csv(filename)

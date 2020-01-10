@@ -24,20 +24,24 @@ import numpy as np
 import random
 from keras import optimizers
 from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Reshape, Input, UpSampling2D
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, ZeroPadding2D, Input, UpSampling2D
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
+from keras.optimizers import Adam
 
 np.random.seed(0)
 total_acc = list()
+ch_kernel_size = (1, 5)
+dp_kernel_size = (10, 1)
 
-for isub in range(30,60):
+
+for isub in range(30,40):
     print(isub+1)
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
-    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -80,36 +84,60 @@ for isub in range(30,60):
     vali_data = np.expand_dims(vali_data, axis=1)
 
     # ENCODER
-    inp = Input((1, 250, 28))
-    x = Conv2D(16, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(inp)  # nb_filter, nb_row, nb_col
-    x = MaxPooling2D((2, 2), border_mode='same', data_format='channels_first')(x)
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
-    x = MaxPooling2D((5, 2), border_mode='same', data_format='channels_first')(x)
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
-    encoded = MaxPooling2D((5, 7), border_mode='same', data_format='channels_first')(x)
+    input_img = Input((1, nlen, nch))
+    if (nch % 2) == 0:
+        x = Conv2D(filters=32, kernel_size=ch_kernel_size, activation='relu', border_mode='same',
+                   data_format='channels_first')(input_img)  # nb_filter, nb_row, nb_col
+    else:
+        x = ZeroPadding2D(padding=((0, 0), (0, 1)), data_format='channels_first')(input_img)
+        x = Conv2D(filters=32, kernel_size=ch_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(x)  # nb_filter, nb_row, nb_col
+    x = MaxPooling2D(pool_size=(1, 2), border_mode='same', data_format='channels_first')(x)
+    x = Conv2D(filters=64, kernel_size=dp_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(x)
+    encoded = MaxPooling2D(pool_size=(1, 1), border_mode='same', data_format='channels_first')(x)
 
     # DECODER
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(encoded)
-    x = UpSampling2D((5, 7), data_format='channels_first')(x)
-    x = Conv2D(8, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
-    x = UpSampling2D((5, 2), data_format='channels_first')(x)
+    x = Conv2D(filters=64, kernel_size=dp_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(encoded)
+    x = UpSampling2D(size=(1, 2), data_format='channels_first')(x)
+    x = Conv2D(filters=32, kernel_size=ch_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(x)
+    x = UpSampling2D(size=(1, 1), data_format='channels_first')(x)
+    decoded = Conv2D(filters=1, kernel_size=(1,1),  activation='sigmoid', border_mode='same', data_format='channels_first')(x)
 
-    # In original tutorial, border_mode='same' was used.
-    # then the shape of 'decoded' will be 32 x 32, instead of 28 x 28
-    # x = Convolution2D(16, 3, 3, activation='relu', border_mode='same')(x)
-    x = Conv2D(16, 3, 3, activation='relu', border_mode='same', data_format='channels_first')(x)
-    x = UpSampling2D((2, 2), data_format='channels_first')(x)
-    decoded = Conv2D(1, 5, 5, activation='sigmoid', border_mode='same', data_format='channels_first')(x)
+    autoencoder = Model(input_img, decoded)
+    encoder = Model(input_img, encoded)
 
-    ae = Model(inp, decoded)
-    ae.compile(optimizer='adadelta', loss='mean_squared_error')
-    ae.summary()
-    ae.fit(train_data, train_data, epochs=200, batch_size=20, validation_data=(vali_data, vali_data))
+    autoencoder.summary()
+    autoencoder.compile(optimizer='adam', loss='mean_squared_error')
+    early_stopping = EarlyStopping(patience=5)
+    autoencoder.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data), callbacks=[early_stopping])
+
+    for layer in autoencoder.layers[:-5]:
+        layer.trainable = False
+
+    new_input = autoencoder.input
+    dense1 = Flatten()(encoded)
+    # dense2 = Dense(100, activation='tanh')(dense1)
+    dense3 = Dense(50, activation='tanh')(dense1)
+    new_output = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))(dense3)
+
+    model = Model(new_input, new_output)
+    model.summary()
+
+    model.layers[1].set_weights(autoencoder.layers[1].get_weights())
+    model.layers[2].set_weights(autoencoder.layers[2].get_weights())
+    model.layers[3].set_weights(autoencoder.layers[3].get_weights())
+    model.layers[4].set_weights(autoencoder.layers[4].get_weights())
+
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.01, amsgrad=False)
+    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
+    early_stopping2 = EarlyStopping(patience=10)
+    model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping2])
+
+    model_name = 'E:/[9] 졸업논문/model/model_CAE_train'+str(isub+1)+'.h5'
+    model.save(model_name)
 
     ## Test
-    # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
-    path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -123,7 +151,7 @@ for isub in range(30,60):
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            prob = model.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
@@ -133,11 +161,10 @@ for isub in range(30,60):
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
     print(np.mean(total_acc))
-
+#
 # for isub in range(14):
 #     print(isub)
-#     # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-#     path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+#     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
 #     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
 #     data = io.loadmat(path)
 #
@@ -177,31 +204,63 @@ for isub in range(30,60):
 #         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
 #         vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 #
-#     ## Build Stacked AutoEncoder
-#     model = Sequential()
-#     model.add(Conv1D(filters=64, kernel_size=10 , input_shape=(nlen, nch)))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     model.add(Conv1D(filters=64, kernel_size=10))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     model.add(Dropout(0.5))
-#     model.add(MaxPooling1D(pool_size=2))
-#     model.add(Flatten())
-#     model.add(Dense(50))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     model.add(Dense(1, activation='sigmoid'))
-#     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#     # print(model.summary())
-#     early_stopping = EarlyStopping(patience=10)
-#     model.fit(train_data, train_label, epochs=200, batch_size=20, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+#     train_data = np.expand_dims(train_data, axis=1)
+#     vali_data = np.expand_dims(vali_data, axis=1)
 #
-#     ## classifier
+#     # ENCODER
+#     input_img = Input((1, nlen, nch))
+#     if (nch % 2) == 0:
+#         x = Conv2D(filters=32, kernel_size=ch_kernel_size, activation='relu', border_mode='same',
+#                    data_format='channels_first')(input_img)  # nb_filter, nb_row, nb_col
+#     else:
+#         x = ZeroPadding2D(padding=((0, 0), (0, 1)), data_format='channels_first')(input_img)
+#         x = Conv2D(filters=32, kernel_size=ch_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(x)  # nb_filter, nb_row, nb_col
+#     x = MaxPooling2D(pool_size=(1, 2), border_mode='same', data_format='channels_first')(x)
+#     x = Conv2D(filters=64, kernel_size=dp_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(x)
+#     encoded = MaxPooling2D(pool_size=(1, 1), border_mode='same', data_format='channels_first')(x)
+#
+#     # DECODER
+#     x = Conv2D(filters=64, kernel_size=dp_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(encoded)
+#     x = UpSampling2D(size=(1, 2), data_format='channels_first')(x)
+#     x = Conv2D(filters=32, kernel_size=ch_kernel_size, activation='relu', border_mode='same', data_format='channels_first')(x)
+#     x = UpSampling2D(size=(1, 1), data_format='channels_first')(x)
+#     decoded = Conv2D(filters=1, kernel_size=(1,1),  activation='sigmoid', border_mode='same', data_format='channels_first')(x)
+#
+#     autoencoder = Model(input_img, decoded)
+#     encoder = Model(input_img, encoded)
+#
+#     autoencoder.summary()
+#     autoencoder.compile(optimizer='adam', loss='mean_squared_error')
+#     early_stopping = EarlyStopping(patience=5)
+#     autoencoder.fit(train_data,train_data, epochs=200, batch_size=8, shuffle=True, validation_data=(vali_data, vali_data), callbacks=[early_stopping])
+#
+#     for layer in autoencoder.layers[:-5]:
+#         layer.trainable = False
+#
+#     new_input = autoencoder.input
+#     dense1 = Flatten()(encoded)
+#     dense2 = Dense(100, activation='relu')(dense1)
+#     dense3 = Dense(50, activation='relu')(dense2)
+#     new_output = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))(dense3)
+#
+#     model = Model(new_input, new_output)
+#     model.summary()
+#
+#     model.layers[1].set_weights(autoencoder.layers[1].get_weights())
+#     model.layers[2].set_weights(autoencoder.layers[2].get_weights())
+#     model.layers[3].set_weights(autoencoder.layers[3].get_weights())
+#     model.layers[4].set_weights(autoencoder.layers[4].get_weights())
+#
+#     adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.01, amsgrad=False)
+#     model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
+#     early_stopping2 = EarlyStopping(patience=10)
+#     model.fit(train_data, train_label, epochs=200, batch_size=8, validation_data=(vali_data, vali_label), callbacks=[early_stopping2])
+#
+#     model_name = 'E:/[9] 졸업논문/model/model_BS_CAE_train'+str(isub+1)+'.h5'
+#     model.save(model_name)
 #
 #     ## Test
-#     # path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-#     path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+#     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
 #     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
 #     data2 = io.loadmat(path)
 #     corr_ans = 0
@@ -215,7 +274,8 @@ for isub in range(30,60):
 #             test_data = np.reshape(test_data, (1,nlen,nch))
 #             for k in range(test_data.shape[1]):
 #                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-#             prob = model.predict_proba(test_data)
+#             test_data = np.expand_dims(test_data, axis=1)
+#             prob = model.predict(test_data)
 #             total_prob.append(prob[0][0])
 #         predicted_label = np.argmax(total_prob)
 #         if data2['target'][i][0] == (predicted_label+1):
@@ -225,7 +285,7 @@ for isub in range(30,60):
 #     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
 #     print(total_acc)
 #     print(np.mean(total_acc))
-#
-# df = pd.DataFrame(total_acc)
-# filename = 'P300_Result_CNN_BN.csv'
-# df.to_csv(filename)
+
+df = pd.DataFrame(total_acc)
+filename = 'P300_Result_CAE1.csv'
+df.to_csv(filename)
