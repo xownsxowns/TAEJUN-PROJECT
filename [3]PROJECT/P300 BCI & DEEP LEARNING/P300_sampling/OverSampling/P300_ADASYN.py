@@ -29,8 +29,7 @@ from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
-from imblearn.under_sampling import *
-
+from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score
 
 # parameter setting
@@ -43,7 +42,7 @@ ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)
 
 for isub in range(30,60):
-    tomek = TomekLinks(random_state=5)
+    adasyn = ADASYN(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -79,7 +78,7 @@ for isub in range(30,60):
 
     ori_shape = train_vali_data.shape
     reshape_data = np.reshape(train_vali_data, (train_vali_data.shape[0], (train_vali_data.shape[1] * train_vali_data.shape[2])))
-    data_res, y_res = tomek.fit_resample(reshape_data, train_vali_label)
+    data_res, y_res = adasyn.fit_resample(reshape_data, train_vali_label)
     data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
     train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res, test_size=0.10, random_state=42)
 
@@ -116,7 +115,7 @@ for isub in range(30,60):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/undersampling/model_CNN_tomek_train' + str(isub + 1) + '.h5'
+    model_name = 'E:/[9] 졸업논문/model/oversampling/model_CNN_adasyn_train' + str(isub + 1) + '.h5'
     model.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
@@ -168,7 +167,7 @@ for isub in range(30,60):
     print(np.mean(total_acc))
 
 for isub in range(14):
-    tomek = TomekLinks(random_state=5)
+    adasyn = ADASYN(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
@@ -204,7 +203,7 @@ for isub in range(14):
 
     ori_shape = train_vali_data.shape
     reshape_data = np.reshape(train_vali_data, (train_vali_data.shape[0], (train_vali_data.shape[1] * train_vali_data.shape[2])))
-    data_res, y_res = tomek.fit_resample(reshape_data, train_vali_label)
+    data_res, y_res = adasyn.fit_resample(reshape_data, train_vali_label)
     data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
 
     train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res, test_size=0.10, random_state=42)
@@ -242,9 +241,9 @@ for isub in range(14):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/undersampling/model_BS_CNN_tomek_train' + str(isub + 1) + '.h5'
+    model_name = 'E:/[9] 졸업논문/model/oversampling/model_BS_CNN_adasyn_train' + str(isub + 1) + '.h5'
     model.save(model_name)
-    ## classifier
+
     ## prob로 하지 않고 그냥 predict로 했을 때
     training_score = accuracy_score(train_label, model.predict_classes(train_data))
     train_score.append(training_score)
@@ -294,13 +293,13 @@ for isub in range(14):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_tomek.csv'
+filename = 'P300_Result_CNN_adasyn.csv'
 df.to_csv(filename)
 
 df2 = pd.DataFrame(train_score)
-filename = 'P300_Result_CNN_tomek_trainscore.csv'
+filename = 'P300_Result_CNN_adasyn_trainscore.csv'
 df2.to_csv(filename)
 
 df3 = pd.DataFrame(train_score_prob)
-filename = 'P300_Result_CNN_tomek_trainscore_prob.csv'
+filename = 'P300_Result_CNN_adasyn_trainscore_prob.csv'
 df3.to_csv(filename)

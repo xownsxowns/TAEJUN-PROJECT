@@ -42,7 +42,7 @@ ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)
 
 for isub in range(30,60):
-    sm = SMOTE(random_state=20)
+    sm = SMOTE(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -92,7 +92,6 @@ for isub in range(30,60):
     train_data = np.expand_dims(train_data, axis=1)
     vali_data = np.expand_dims(vali_data, axis=1)
 
-    ## Build Stacked AutoEncoder
     model = Sequential()
     # channel convolution
     model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
@@ -167,7 +166,7 @@ for isub in range(30,60):
     print(np.mean(total_acc))
 
 for isub in range(14):
-    sm = SMOTE(random_state=20)
+    sm = SMOTE(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'

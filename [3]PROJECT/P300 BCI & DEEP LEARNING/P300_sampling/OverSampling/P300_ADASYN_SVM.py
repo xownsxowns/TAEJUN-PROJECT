@@ -22,15 +22,9 @@ from scipy import io, signal
 import pandas as pd
 import numpy as np
 import random
-from keras import optimizers
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, AveragePooling2D
-from keras.callbacks import EarlyStopping
+from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from keras.regularizers import l2
-from imblearn.under_sampling import *
-
+from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score
 
 # parameter setting
@@ -39,11 +33,8 @@ train_score = list()
 train_score_prob = list()
 np.random.seed(0)
 
-ch_kernel_size = (1, 5)
-dp_kernel_size = (10, 1)
-
 for isub in range(30,60):
-    tomek = TomekLinks(random_state=5)
+    adasyn = ADASYN(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -74,53 +65,24 @@ for isub in range(30,60):
     tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
     nontar_data = np.reshape(nontar_data,((ntrain*3),nlen,nch))
 
-    train_vali_data = np.concatenate((tar_data, nontar_data))
-    train_vali_label = np.concatenate((tar_label, nontar_label))
-
-    ori_shape = train_vali_data.shape
-    reshape_data = np.reshape(train_vali_data, (train_vali_data.shape[0], (train_vali_data.shape[1] * train_vali_data.shape[2])))
-    data_res, y_res = tomek.fit_resample(reshape_data, train_vali_label)
-    data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
-    train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res, test_size=0.10, random_state=42)
+    train_data = np.concatenate((tar_data, nontar_data))
+    train_label = np.concatenate((tar_label, nontar_label))
 
     ## standardScaler 해줘보자
     scalers = {}
     for i in range(train_data.shape[1]):
         scalers[i] = StandardScaler()
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
-        vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-    train_data = np.expand_dims(train_data, axis=1)
-    vali_data = np.expand_dims(vali_data, axis=1)
+    ori_shape = train_data.shape
+    reshape_data = np.reshape(train_data, (train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
+    data_res, y_res = adasyn.fit_resample(reshape_data, train_label)
 
-    ## Build Stacked AutoEncoder
-    model = Sequential()
-    # channel convolution
-    model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
-    # data point convolution
-    model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
-    model.add(Flatten())
-    model.add(Dense(32))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
-    early_stopping = EarlyStopping(patience=5)
-    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
-
-    model_name = 'E:/[9] 졸업논문/model/undersampling/model_CNN_tomek_train' + str(isub + 1) + '.h5'
-    model.save(model_name)
+    clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf.fit(data_res, y_res)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
-    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    training_score = accuracy_score(y_res, clf.predict(data_res))
     train_score.append(training_score)
 
     ## prob으로 했을 때
@@ -131,10 +93,12 @@ for isub in range(30,60):
     for aa in range(50):
         tarr_data = tarr[aa,:,:]
         ntarr_data = ntarr[3*aa:3*(aa+1),:,:]
+        tarr_data = np.reshape(tarr_data, (tarr_data.shape[0]*tarr_data.shape[1]))
         tarr_data = np.expand_dims(tarr_data, axis=0)
+        ntarr_data = np.reshape(ntarr_data, (ntarr_data.shape[0],(ntarr_data.shape[1]*ntarr_data.shape[2])))
         ttrain_data = np.concatenate((tarr_data, ntarr_data))
-        probb = model.predict_proba(ttrain_data)
-        predicted_tar = np.argmax(probb)
+        probb = clf.predict_proba(ttrain_data)
+        predicted_tar = np.argmin(probb[:,0])
         if predicted_tar == 0:
             corr_train_ans += 1
     train_score_prob.append((corr_train_ans/50)*100)
@@ -155,11 +119,11 @@ for isub in range(30,60):
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-            test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
+            prob = clf.predict_proba(new_test_data)
             total_prob.append(prob[0][0])
-        predicted_label = np.argmax(total_prob)
-        if data2['target'][i][0] == (predicted_label+1):
+        predicted_label = np.argmin(total_prob)
+        if data2['target'][i][0] == (predicted_label + 1):
             corr_ans += 1
 
     total_acc.append((corr_ans/ntest)*100)
@@ -168,7 +132,7 @@ for isub in range(30,60):
     print(np.mean(total_acc))
 
 for isub in range(14):
-    tomek = TomekLinks(random_state=5)
+    adasyn = ADASYN(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
@@ -199,54 +163,24 @@ for isub in range(14):
     tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
     nontar_data = np.reshape(nontar_data,((ntrain*5),nlen,nch))
 
-    train_vali_data = np.concatenate((tar_data, nontar_data))
-    train_vali_label = np.concatenate((tar_label, nontar_label))
-
-    ori_shape = train_vali_data.shape
-    reshape_data = np.reshape(train_vali_data, (train_vali_data.shape[0], (train_vali_data.shape[1] * train_vali_data.shape[2])))
-    data_res, y_res = tomek.fit_resample(reshape_data, train_vali_label)
-    data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
-
-    train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res, test_size=0.10, random_state=42)
+    train_data = np.concatenate((tar_data, nontar_data))
+    train_label = np.concatenate((tar_label, nontar_label))
 
     ## standardScaler 해줘보자
     scalers = {}
     for i in range(train_data.shape[1]):
         scalers[i] = StandardScaler()
         train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
-        vali_data[:,i,:] = scalers[i].transform(vali_data[:,i,:])
 
-    train_data = np.expand_dims(train_data, axis=1)
-    vali_data = np.expand_dims(vali_data, axis=1)
+    ori_shape = train_data.shape
+    reshape_data = np.reshape(train_data, (train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
+    data_res, y_res = adasyn.fit_resample(reshape_data, train_label)
 
-    ## Build Stacked AutoEncoder
-    model = Sequential()
-    # channel convolution
-    model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
-    # data point convolution
-    model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
-    model.add(Flatten())
-    model.add(Dense(32))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
-    early_stopping = EarlyStopping(patience=5)
-    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+    clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf.fit(data_res, y_res)
 
-    model_name = 'E:/[9] 졸업논문/model/undersampling/model_BS_CNN_tomek_train' + str(isub + 1) + '.h5'
-    model.save(model_name)
-    ## classifier
     ## prob로 하지 않고 그냥 predict로 했을 때
-    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    training_score = accuracy_score(y_res, clf.predict(data_res))
     train_score.append(training_score)
 
     ## prob으로 했을 때
@@ -255,16 +189,17 @@ for isub in range(14):
     corr_train_ans = 0
 
     for aa in range(50):
-        tarr_data = tarr[aa, :, :]
-        ntarr_data = ntarr[5 * aa:5 * (aa + 1), :, :]
+        tarr_data = tarr[aa,:,:]
+        ntarr_data = ntarr[5*aa:5*(aa+1),:,:]
+        tarr_data = np.reshape(tarr_data, (tarr_data.shape[0]*tarr_data.shape[1]))
         tarr_data = np.expand_dims(tarr_data, axis=0)
+        ntarr_data = np.reshape(ntarr_data, (ntarr_data.shape[0],(ntarr_data.shape[1]*ntarr_data.shape[2])))
         ttrain_data = np.concatenate((tarr_data, ntarr_data))
-        probb = model.predict_proba(ttrain_data)
-        predicted_tar = np.argmax(probb)
+        probb = clf.predict_proba(ttrain_data)
+        predicted_tar = np.argmin(probb[:,0])
         if predicted_tar == 0:
             corr_train_ans += 1
-    train_score_prob.append((corr_train_ans / 50) * 100)
-
+    train_score_prob.append((corr_train_ans/50)*100)
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
@@ -281,11 +216,11 @@ for isub in range(14):
             test_data = np.reshape(test_data, (1,nlen,nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-            test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
+            prob = clf.predict_proba(new_test_data)
             total_prob.append(prob[0][0])
-        predicted_label = np.argmax(total_prob)
-        if data2['target'][i][0] == (predicted_label+1):
+        predicted_label = np.argmin(total_prob)
+        if data2['target'][i][0] == (predicted_label + 1):
             corr_ans += 1
 
     total_acc.append((corr_ans/ntest)*100)
@@ -294,13 +229,13 @@ for isub in range(14):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_tomek.csv'
+filename = 'P300_Result_SVM_adasyn.csv'
 df.to_csv(filename)
 
 df2 = pd.DataFrame(train_score)
-filename = 'P300_Result_CNN_tomek_trainscore.csv'
+filename = 'P300_Result_SVM_adasyn_trainscore.csv'
 df2.to_csv(filename)
 
 df3 = pd.DataFrame(train_score_prob)
-filename = 'P300_Result_CNN_tomek_trainscore_prob.csv'
+filename = 'P300_Result_SVM_adasyn_trainscore_prob.csv'
 df3.to_csv(filename)

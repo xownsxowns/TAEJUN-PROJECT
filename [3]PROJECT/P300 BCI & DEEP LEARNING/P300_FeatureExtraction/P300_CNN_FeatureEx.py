@@ -117,13 +117,13 @@ for isub in range(30,60):
     train_score.append(training_score)
 
     ## prob으로 했을 때
-    tarr = train_data[:50,:,:]
-    ntarr = train_data[50:,:,:]
+    tarr = train_data[:50,:,:,:]
+    ntarr = train_data[50:,:,:,:]
     corr_train_ans = 0
 
     for aa in range(50):
-        tarr_data = tarr[aa,:,:]
-        ntarr_data = ntarr[3*aa:3*(aa+1),:,:]
+        tarr_data = tarr[aa,:,:,:]
+        ntarr_data = ntarr[3*aa:3*(aa+1),:,:,:]
         tarr_data = np.expand_dims(tarr_data, axis=0)
         ttrain_data = np.concatenate((tarr_data, ntarr_data))
         probb = model.predict_proba(ttrain_data)
