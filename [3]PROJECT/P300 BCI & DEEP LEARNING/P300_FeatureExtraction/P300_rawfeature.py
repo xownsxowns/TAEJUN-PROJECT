@@ -110,7 +110,7 @@ for isub in range(30,60):
     train_data = np.concatenate((total_tar_data, total_ntar_data))
     train_label = np.concatenate((tar_label, nontar_label))
 
-    clf = SVC(probability=True)
+    clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf.fit(train_data, train_label)
 
     train_acc.append(clf.score(train_data, train_label))
@@ -241,7 +241,7 @@ for isub in range(14):
     train_data = np.concatenate((total_tar_data, total_ntar_data))
     train_label = np.concatenate((tar_label, nontar_label))
 
-    clf = SVC(probability=True)
+    clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf.fit(train_data, train_label)
 
     train_acc.append(clf.score(train_data, train_label))

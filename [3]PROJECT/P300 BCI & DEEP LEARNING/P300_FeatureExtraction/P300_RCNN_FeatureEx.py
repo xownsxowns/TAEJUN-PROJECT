@@ -23,8 +23,8 @@ import pandas as pd
 import numpy as np
 import random
 from keras import optimizers
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, AveragePooling2D
+from keras.models import Sequential, Model
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, Reshape, LSTM, Input, Permute
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -36,9 +36,7 @@ total_acc = list()
 train_score = list()
 train_score_prob = list()
 np.random.seed(0)
-random.seed(0)
 
-repeat_num = 1
 
 for isub in range(30,60):
     print(isub)
@@ -89,34 +87,39 @@ for isub in range(30,60):
     ch_kernel_size = (1, nch)
     dp_kernel_size = (10, 1)
 
+    input_img = Input(shape=(1, nlen, nch))
+    x = Conv2D(filters=32, kernel_size=ch_kernel_size, data_format='channels_first')(input_img)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = Permute((2,3,1))(x)
+    x = Reshape((nlen,32))(x)
     ## Build Stacked AutoEncoder
-    model = Sequential()
-    # channel convolution
-    model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    # model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
-    # data point convolution
-    model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
-    model.add(Flatten())
-    model.add(Dense(32))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
-    early_stopping = EarlyStopping(patience=5)
-    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/model_CNN' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
-    model.save(model_name)
+    # LSTM
+    x = LSTM(64)(x)
+    x = Dense(32)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01))(x)
+
+    LSTM_CNN = Model(input_img, x)
+    LSTM_CNN.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
+    print(LSTM_CNN.summary())
+    early_stopping = EarlyStopping(patience=5)
+    LSTM_CNN.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+
+    model_name = 'E:/[9] 졸업논문/model/model_LSTM_CNN_train' + str(isub + 1) + '.h5'
+    LSTM_CNN.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
-    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    prob_predicted = LSTM_CNN.predict(train_data)
+    prob_predicted_label = list()
+    for aaa in range(len(prob_predicted)):
+        if prob_predicted[aaa][0] > 0.5:
+            prob_predicted_label.append(1)
+        else:
+            prob_predicted_label.append(0)
+    training_score = accuracy_score(train_label, prob_predicted_label)
     train_score.append(training_score)
 
     ## prob으로 했을 때
@@ -129,7 +132,7 @@ for isub in range(30,60):
         ntarr_data = ntarr[3*aa:3*(aa+1),:,:,:]
         tarr_data = np.expand_dims(tarr_data, axis=0)
         ttrain_data = np.concatenate((tarr_data, ntarr_data))
-        probb = model.predict_proba(ttrain_data)
+        probb = LSTM_CNN.predict(ttrain_data)
         predicted_tar = np.argmax(probb)
         if predicted_tar == 0:
             corr_train_ans += 1
@@ -152,7 +155,7 @@ for isub in range(30,60):
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            prob = LSTM_CNN.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
@@ -211,34 +214,40 @@ for isub in range(14):
 
     ch_kernel_size = (1, nch)
     dp_kernel_size = (10, 1)
-    ## Build Stacked AutoEncoder
-    model = Sequential()
-    # channel convolution
-    model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    # model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
-    # data point convolution
-    model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
-    model.add(Flatten())
-    model.add(Dense(32))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
-    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-    print(model.summary())
-    early_stopping = EarlyStopping(patience=5)
-    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/model_BS_CNN' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
-    model.save(model_name)
+    input_img = Input(shape=(1, nlen, nch))
+    x = Conv2D(filters=32, kernel_size=ch_kernel_size, data_format='channels_first')(input_img)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = Permute((2,3,1))(x)
+    x = Reshape((nlen,32))(x)
+    ## Build Stacked AutoEncoder
+
+    # LSTM
+    x = LSTM(64)(x)
+    x = Dense(32)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01))(x)
+
+    LSTM_CNN = Model(input_img, x)
+    LSTM_CNN.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
+    print(LSTM_CNN.summary())
+    early_stopping = EarlyStopping(patience=5)
+    LSTM_CNN.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+
+    model_name = 'E:/[9] 졸업논문/model/model_BS_LSTM_CNN_train' + str(isub + 1) + '.h5'
+    LSTM_CNN.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
-    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    prob_predicted = LSTM_CNN.predict(train_data)
+    prob_predicted_label = list()
+    for aaa in range(len(prob_predicted)):
+        if prob_predicted[aaa][0] > 0.5:
+            prob_predicted_label.append(1)
+        else:
+            prob_predicted_label.append(0)
+    training_score = accuracy_score(train_label, prob_predicted_label)
     train_score.append(training_score)
 
     ## prob으로 했을 때
@@ -251,7 +260,7 @@ for isub in range(14):
         ntarr_data = ntarr[5 * aa:5 * (aa + 1), :, :]
         tarr_data = np.expand_dims(tarr_data, axis=0)
         ttrain_data = np.concatenate((tarr_data, ntarr_data))
-        probb = model.predict_proba(ttrain_data)
+        probb = LSTM_CNN.predict(ttrain_data)
         predicted_tar = np.argmax(probb)
         if predicted_tar == 0:
             corr_train_ans += 1
@@ -274,7 +283,7 @@ for isub in range(14):
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
             test_data = np.expand_dims(test_data, axis=1)
-            prob = model.predict_proba(test_data)
+            prob = LSTM_CNN.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
@@ -286,13 +295,13 @@ for isub in range(14):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN' + str(repeat_num) + '.csv'
+filename = 'P300_Result_CNN_LSTM.csv'
 df.to_csv(filename)
 
 df2 = pd.DataFrame(train_score)
-filename = 'P300_Result_CNN' + str(repeat_num) + '_trainscore.csv'
+filename = 'P300_Result_CNN_LSTM_trainscore.csv'
 df2.to_csv(filename)
 
 df3 = pd.DataFrame(train_score_prob)
-filename = 'P300_Result_CNN' + str(repeat_num) + '_trainscore_prob.csv'
+filename = 'P300_Result_CNN_LSTM_trainscore_prob.csv'
 df3.to_csv(filename)

@@ -37,8 +37,8 @@ total_acc = list()
 train_score = list()
 train_score_prob = list()
 np.random.seed(0)
+random.seed(0)
 
-ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)
 
 for isub in range(30,60):
@@ -92,6 +92,7 @@ for isub in range(30,60):
     train_data = np.expand_dims(train_data, axis=1)
     vali_data = np.expand_dims(vali_data, axis=1)
 
+    ch_kernel_size = (1, 5)
     ## Build Stacked AutoEncoder
     model = Sequential()
     # channel convolution
@@ -115,8 +116,8 @@ for isub in range(30,60):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/oversampling/model_CNN_bsmote_train' + str(isub + 1) + '.h5'
-    model.save(model_name)
+    # model_name = 'E:/[9] 졸업논문/model/oversampling/model_CNN_bsmote_train' + str(isub + 1) + '.h5'
+    # model.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
     training_score = accuracy_score(train_label, model.predict_classes(train_data))
@@ -218,6 +219,8 @@ for isub in range(14):
     train_data = np.expand_dims(train_data, axis=1)
     vali_data = np.expand_dims(vali_data, axis=1)
 
+    ch_kernel_size = (1, 5)
+
     ## Build Stacked AutoEncoder
     model = Sequential()
     # channel convolution
@@ -241,8 +244,8 @@ for isub in range(14):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/oversampling/model_BS_CNN_bsmote_train' + str(isub + 1) + '.h5'
-    model.save(model_name)
+    # model_name = 'E:/[9] 졸업논문/model/oversampling/model_BS_CNN_bsmote_train' + str(isub + 1) + '.h5'
+    # model.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
     training_score = accuracy_score(train_label, model.predict_classes(train_data))
@@ -292,14 +295,14 @@ for isub in range(14):
     print(total_acc)
     print(np.mean(total_acc))
 
-df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN_borderline_smote.csv'
-df.to_csv(filename)
-
-df2 = pd.DataFrame(train_score)
-filename = 'P300_Result_CNN_borderline_smote_trainscore.csv'
-df2.to_csv(filename)
-
-df3 = pd.DataFrame(train_score_prob)
-filename = 'P300_Result_CNN_borderline_smote_trainscore_prob.csv'
-df3.to_csv(filename)
+# df = pd.DataFrame(total_acc)
+# filename = 'P300_Result_CNN_borderline_smote.csv'
+# df.to_csv(filename)
+#
+# df2 = pd.DataFrame(train_score)
+# filename = 'P300_Result_CNN_borderline_smote_trainscore.csv'
+# df2.to_csv(filename)
+#
+# df3 = pd.DataFrame(train_score_prob)
+# filename = 'P300_Result_CNN_borderline_smote_trainscore_prob.csv'
+# df3.to_csv(filename)
