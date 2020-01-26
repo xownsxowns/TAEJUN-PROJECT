@@ -43,7 +43,7 @@ dp_kernel_size = (10, 1)
 
 for repeat_num in range(1,11):
     for isub in range(30,60):
-        sm = SMOTE(random_state=5)
+        sm = BorderlineSMOTE(random_state=5)
         print(isub)
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
         # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -93,14 +93,14 @@ for repeat_num in range(1,11):
         train_data = np.expand_dims(train_data, axis=1)
         vali_data = np.expand_dims(vali_data, axis=1)
 
-        ch_kernel_size = (1, nch)
-
+        ch_kernel_size = (1, 5)
+        ## Build Stacked AutoEncoder
         model = Sequential()
         # channel convolution
         model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        # model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
+        model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
         # data point convolution
         model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
         model.add(BatchNormalization())
@@ -117,7 +117,7 @@ for repeat_num in range(1,11):
         early_stopping = EarlyStopping(patience=5)
         model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/oversampling/model_CNN_smote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/oversampling/model_CNN_bsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model.save(model_name)
 
         ## prob로 하지 않고 그냥 predict로 했을 때
@@ -169,7 +169,7 @@ for repeat_num in range(1,11):
         print(np.mean(total_acc))
 
     for isub in range(14):
-        sm = SMOTE(random_state=5)
+        sm = BorderlineSMOTE(random_state=5)
         print(isub)
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
         # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
@@ -219,7 +219,8 @@ for repeat_num in range(1,11):
 
         train_data = np.expand_dims(train_data, axis=1)
         vali_data = np.expand_dims(vali_data, axis=1)
-        ch_kernel_size = (1, nch)
+
+        ch_kernel_size = (1, 5)
 
         ## Build Stacked AutoEncoder
         model = Sequential()
@@ -227,7 +228,7 @@ for repeat_num in range(1,11):
         model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        # model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
+        model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
         # data point convolution
         model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
         model.add(BatchNormalization())
@@ -244,7 +245,7 @@ for repeat_num in range(1,11):
         early_stopping = EarlyStopping(patience=5)
         model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/oversampling/model_BS_CNN_smote__t' + str(repeat_num) + 'train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/oversampling/model_BS_CNN_bsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model.save(model_name)
 
         ## prob로 하지 않고 그냥 predict로 했을 때
@@ -296,15 +297,14 @@ for repeat_num in range(1,11):
         print(np.mean(total_acc))
 
     df = pd.DataFrame(total_acc)
-    filename = 'P300_Result_CNN_smote_t' + str(repeat_num) + '.csv'
+    filename = 'P300_Result_CNN_borderline_smote_t' + str(repeat_num) + '.csv'
     df.to_csv(filename)
 
     df2 = pd.DataFrame(train_score)
-    filename = 'P300_Result_CNN_smote_t' + str(repeat_num) + '_trainscore.csv'
+    filename = 'P300_Result_CNN_borderline_smote_t' + str(repeat_num) + '_trainscore.csv'
     df2.to_csv(filename)
 
     df3 = pd.DataFrame(train_score_prob)
-    filename = 'P300_Result_CNN_smote_t' + str(repeat_num) + '_trainscore_prob.csv'
+    filename = 'P300_Result_CNN_borderline_smote_t' + str(repeat_num) + '_trainscore_prob.csv'
     df3.to_csv(filename)
-
-    print("repeat_num:" + repeat_num)
+    print("repeat num:" + repeat_num)

@@ -37,6 +37,7 @@ total_acc = list()
 train_score = list()
 train_score_prob = list()
 np.random.seed(0)
+random.seed(0)
 
 ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)

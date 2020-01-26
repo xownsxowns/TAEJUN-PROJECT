@@ -1,0 +1,268 @@
+
+## P300 Classification
+## SVM
+
+# Epoch Sub1 ~ Sub30: TV
+# Epoch Sub31 ~ Sub45: Doorlock
+# Epoch Sub46 ~ Sub60: Lamp
+# Epoch BS Sub 1 ~Sub45: Bluetooth speaker
+
+# 1. Preprocessing
+#  1) 0.5Hz highpass filter (FIR)
+#  2) Bad channel rejection (1Hz lowpass filter , 2nd order Butter. , Corr. coeff < 0.4 , 70 % above)
+#  3) Common average re-reference
+#  4) 50Hz lowpass filter (FIR)
+#  5) Artifact subspace reconstruction (cutoff: 10)
+#
+# 2. Data
+#    ERP : [channel x time x stimulus type x block] (training: 50 block, test: 30 block)
+#    target : [block x 1] target stimulus of each block
+
+
+## validation, early stopping
+
+from scipy import io, signal
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+
+total_acc = list()
+np.random.seed(0)
+
+for isub in range(30,60):
+    print(isub+1)
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    data = io.loadmat(path)
+
+    nch = np.shape(data['ERP'])[0]
+    nlen = 250
+    ntrain = np.shape(data['ERP'])[3]
+
+    tar_data = list()
+    tar_label = list()
+    nontar_data = list()
+    nontar_label = list()
+
+    for i in range(ntrain):
+        target = data['ERP'][:,150:,data['target'][i][0]-1,i]
+        tar_data.append(target)
+        tar_label.append(1)
+
+        for j in range(4):
+            if j == (data['target'][i][0]-1):
+                continue
+            else:
+                nontar_data.append(data['ERP'][:,150:,j,i])
+                nontar_label.append(0)
+
+    tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
+    nontar_data = np.reshape(nontar_data,((ntrain*3),nlen,nch))
+
+    train_data = np.concatenate((tar_data, nontar_data))
+
+    ## standardScaler 해줘보자
+    scalers = {}
+    for i in range(train_data.shape[1]):
+        scalers[i] = StandardScaler()
+        train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
+
+    tar_data = train_data[0:50,:,:]
+    nontar_data = train_data[50:,:,:]
+
+    # divide nontar_data (3 subset, 150)
+    arr = np.arange(150)
+    np.random.shuffle(arr)
+    subset1_ind = arr[0:50]
+    subset2_ind = arr[50:100]
+    subset3_ind = arr[100:150]
+
+    ntar_data1 = nontar_data[subset1_ind,:,:]
+    ntar_data2 = nontar_data[subset2_ind,:,:]
+    ntar_data3 = nontar_data[subset3_ind,:,:]
+    ntar_label = np.zeros(50)
+
+    train_data1 = np.concatenate((tar_data, ntar_data1))
+    train_label1 = np.concatenate((tar_label, ntar_label))
+
+    train_data2 = np.concatenate((tar_data, ntar_data2))
+    train_label2 = np.concatenate((tar_label, ntar_label))
+
+    train_data3 = np.concatenate((tar_data, ntar_data3))
+    train_label3 = np.concatenate((tar_label, ntar_label))
+
+    new_train_data1 = train_data1.reshape((train_data1.shape[0], (train_data1.shape[1] * train_data1.shape[2])))
+    clf1 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf1.fit(new_train_data1, train_label1)
+
+    new_train_data2 = train_data2.reshape((train_data2.shape[0], (train_data2.shape[1] * train_data2.shape[2])))
+    clf2 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf2.fit(new_train_data2, train_label2)
+
+    new_train_data3 = train_data3.reshape((train_data3.shape[0], (train_data3.shape[1] * train_data3.shape[2])))
+    clf3 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf3.fit(new_train_data3, train_label3)
+
+
+    ## Test
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    data2 = io.loadmat(path)
+    corr_ans = 0
+    ntest = np.shape(data2['ERP'])[3]
+
+    for i in range(ntest):
+        test = data2['ERP'][:,150:,:,i]
+        total_prob = list()
+        for j in range(4):
+            test_data = test[:,:,j]
+            test_data = np.reshape(test_data, (1,nlen,nch))
+            for k in range(test_data.shape[1]):
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
+            new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
+            prob1 = clf1.predict_proba(new_test_data)
+            prob2 = clf2.predict_proba(new_test_data)
+            prob3 = clf3.predict_proba(new_test_data)
+            # prob = clf.predict(new_test_data)
+            total_prob.append(np.mean([prob1[0][0], prob2[0][0], prob3[0][0]]))
+        predicted_label = np.argmin(total_prob)
+        if data2['target'][i][0] == (predicted_label+1):
+            corr_ans += 1
+
+    total_acc.append((corr_ans/ntest)*100)
+    print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
+    print(total_acc)
+
+# BS has 6 icons
+for isub in range(14):
+    print(isub+1)
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    data = io.loadmat(path)
+
+    nch = np.shape(data['ERP'])[0]
+    nlen = 250
+    ntrain = np.shape(data['ERP'])[3]
+
+    tar_data = list()
+    tar_label = list()
+    nontar_data = list()
+    nontar_label = list()
+
+    for i in range(ntrain):
+        target = data['ERP'][:,150:,data['target'][i][0]-1,i]
+        tar_data.append(target)
+        tar_label.append(1)
+
+        for j in range(6):
+            if j == (data['target'][i][0]-1):
+                continue
+            else:
+                nontar_data.append(data['ERP'][:,150:,j,i])
+                nontar_label.append(0)
+
+    tar_data = np.reshape(tar_data,(ntrain,nlen,nch))
+    nontar_data = np.reshape(nontar_data,((ntrain*5),nlen,nch))
+
+    train_data = np.concatenate((tar_data, nontar_data))
+
+    ## standardScaler 해줘보자
+    scalers = {}
+    for i in range(train_data.shape[1]):
+        scalers[i] = StandardScaler()
+        train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
+
+    tar_data = train_data[0:50,:,:]
+    nontar_data = train_data[50:,:,:]
+
+    # divide nontar_data (5 subset, 250)
+    arr = np.arange(250)
+    np.random.shuffle(arr)
+    subset1_ind = arr[0:50]
+    subset2_ind = arr[50:100]
+    subset3_ind = arr[100:150]
+    subset4_ind = arr[150:200]
+    subset5_ind = arr[200:250]
+    subset6_ind = arr[250:300]
+
+    ntar_data1 = nontar_data[subset1_ind,:,:]
+    ntar_data2 = nontar_data[subset2_ind,:,:]
+    ntar_data3 = nontar_data[subset3_ind,:,:]
+    ntar_data4 = nontar_data[subset4_ind,:,:]
+    ntar_data5 = nontar_data[subset5_ind,:,:]
+    ntar_label = np.zeros(50)
+
+    train_data1 = np.concatenate((tar_data, ntar_data1))
+    train_label1 = np.concatenate((tar_label, ntar_label))
+
+    train_data2 = np.concatenate((tar_data, ntar_data2))
+    train_label2 = np.concatenate((tar_label, ntar_label))
+
+    train_data3 = np.concatenate((tar_data, ntar_data3))
+    train_label3 = np.concatenate((tar_label, ntar_label))
+
+    train_data4 = np.concatenate((tar_data, ntar_data4))
+    train_label4 = np.concatenate((tar_label, ntar_label))
+
+    train_data5 = np.concatenate((tar_data, ntar_data5))
+    train_label5 = np.concatenate((tar_label, ntar_label))
+
+    new_train_data1 = train_data1.reshape((train_data1.shape[0], (train_data1.shape[1] * train_data1.shape[2])))
+    clf1 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf1.fit(new_train_data1, train_label1)
+
+    new_train_data2 = train_data2.reshape((train_data2.shape[0], (train_data2.shape[1] * train_data2.shape[2])))
+    clf2 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf2.fit(new_train_data2, train_label2)
+
+    new_train_data3 = train_data3.reshape((train_data3.shape[0], (train_data3.shape[1] * train_data3.shape[2])))
+    clf3 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf3.fit(new_train_data3, train_label3)
+
+    new_train_data4 = train_data4.reshape((train_data4.shape[0], (train_data4.shape[1] * train_data4.shape[2])))
+    clf4 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf4.fit(new_train_data4, train_label4)
+
+    new_train_data5 = train_data5.reshape((train_data5.shape[0], (train_data5.shape[1] * train_data5.shape[2])))
+    clf5 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
+    clf5.fit(new_train_data5, train_label5)
+
+    ## Test
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub + 1) + '_EP_test.mat'
+    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    data2 = io.loadmat(path)
+    corr_ans = 0
+    ntest = np.shape(data2['ERP'])[3]
+
+    for i in range(ntest):
+        test = data2['ERP'][:,150:,:,i]
+        total_prob = list()
+        for j in range(6):
+            test_data = test[:,:,j]
+            test_data = np.reshape(test_data, (1,nlen,nch))
+            for k in range(test_data.shape[1]):
+                test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
+            new_test_data = test_data.reshape((test_data.shape[0], (test_data.shape[1] * test_data.shape[2])))
+            prob1 = clf1.predict_proba(new_test_data)
+            prob2 = clf2.predict_proba(new_test_data)
+            prob3 = clf3.predict_proba(new_test_data)
+            prob4 = clf4.predict_proba(new_test_data)
+            prob5 = clf5.predict_proba(new_test_data)
+            total_prob.append(np.mean([prob1[0][0],prob2[0][0],prob3[0][0],prob4[0][0],prob5[0][0]]))
+        predicted_label = np.argmin(total_prob)
+        if data2['target'][i][0] == (predicted_label+1):
+            corr_ans += 1
+
+    total_acc.append((corr_ans/ntest)*100)
+    print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
+    print(total_acc)
+
+df = pd.DataFrame(total_acc)
+filename = 'P300_Result_multisvm.csv'
+df.to_csv(filename)
