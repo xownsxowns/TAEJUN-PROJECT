@@ -38,7 +38,7 @@ train_score_prob = list()
 np.random.seed(0)
 random.seed(0)
 
-repeat_num = 1
+repeat_num = 10
 
 for isub in range(30,60):
     print(isub)
@@ -112,7 +112,7 @@ for isub in range(30,60):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/model_CNN' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+    model_name = 'E:/[9] 졸업논문/model/model_CNN2_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
     model.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
@@ -234,7 +234,7 @@ for isub in range(14):
     early_stopping = EarlyStopping(patience=5)
     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
 
-    model_name = 'E:/[9] 졸업논문/model/model_BS_CNN' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+    model_name = 'E:/[9] 졸업논문/model/model_BS_CNN2_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
     model.save(model_name)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
@@ -286,13 +286,13 @@ for isub in range(14):
     print(np.mean(total_acc))
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_CNN' + str(repeat_num) + '.csv'
+filename = 'P300_Result_CNN2_t' + str(repeat_num) + '.csv'
 df.to_csv(filename)
 
 df2 = pd.DataFrame(train_score)
-filename = 'P300_Result_CNN' + str(repeat_num) + '_trainscore.csv'
+filename = 'P300_Result_CNN2_t' + str(repeat_num) + '_trainscore.csv'
 df2.to_csv(filename)
 
 df3 = pd.DataFrame(train_score_prob)
-filename = 'P300_Result_CNN' + str(repeat_num) + '_trainscore_prob.csv'
+filename = 'P300_Result_CNN2_t' + str(repeat_num) + '_trainscore_prob.csv'
 df3.to_csv(filename)
