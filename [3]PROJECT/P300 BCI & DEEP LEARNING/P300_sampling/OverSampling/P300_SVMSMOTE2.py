@@ -31,17 +31,20 @@ from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
 from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score
+import gc
+import keras.backend as K
 
 # parameter setting
-total_acc = list()
-train_score = list()
-train_score_prob = list()
+
 np.random.seed(0)
 random.seed(0)
 
 dp_kernel_size = (10, 1)
 
 for repeat_num in range(1,11):
+    total_acc = list()
+    train_score = list()
+    train_score_prob = list()
     for isub in range(30,60):
         svmsm = SVMSMOTE(random_state=5)
         print(isub)
@@ -309,4 +312,8 @@ for repeat_num in range(1,11):
     filename = 'P300_Result_CNN_svmsmote_t' + str(repeat_num) + '_trainscore_prob.csv'
     df3.to_csv(filename)
 
-    print("repeat num:" + repeat_num)
+    print("repeat num:" + str(repeat_num))
+
+    K.clear_session()
+    gc.collect()
+    del model

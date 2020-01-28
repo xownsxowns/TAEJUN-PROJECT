@@ -31,17 +31,19 @@ from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
 from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score
+import gc
+import keras.backend as K
 
 # parameter setting
-total_acc = list()
-train_score = list()
-train_score_prob = list()
 np.random.seed(0)
 random.seed(0)
 
 dp_kernel_size = (10, 1)
 
 for repeat_num in range(1,11):
+    total_acc = list()
+    train_score = list()
+    train_score_prob = list()
     for isub in range(30,60):
         sm = BorderlineSMOTE(random_state=5)
         print(isub)
@@ -93,14 +95,14 @@ for repeat_num in range(1,11):
         train_data = np.expand_dims(train_data, axis=1)
         vali_data = np.expand_dims(vali_data, axis=1)
 
-        ch_kernel_size = (1, 5)
+        ch_kernel_size = (1, nch)
         ## Build Stacked AutoEncoder
         model = Sequential()
         # channel convolution
         model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
+        # model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
         # data point convolution
         model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
         model.add(BatchNormalization())
@@ -220,7 +222,7 @@ for repeat_num in range(1,11):
         train_data = np.expand_dims(train_data, axis=1)
         vali_data = np.expand_dims(vali_data, axis=1)
 
-        ch_kernel_size = (1, 5)
+        ch_kernel_size = (1, nch)
 
         ## Build Stacked AutoEncoder
         model = Sequential()
@@ -228,7 +230,7 @@ for repeat_num in range(1,11):
         model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
+        # model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
         # data point convolution
         model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
         model.add(BatchNormalization())
@@ -307,4 +309,8 @@ for repeat_num in range(1,11):
     df3 = pd.DataFrame(train_score_prob)
     filename = 'P300_Result_CNN_borderline_smote_t' + str(repeat_num) + '_trainscore_prob.csv'
     df3.to_csv(filename)
-    print("repeat num:" + repeat_num)
+    print("repeat num:" + str(repeat_num))
+
+    K.clear_session()
+    gc.collect()
+    del model

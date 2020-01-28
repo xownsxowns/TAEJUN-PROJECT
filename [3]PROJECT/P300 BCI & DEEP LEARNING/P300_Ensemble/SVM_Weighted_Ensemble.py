@@ -22,14 +22,26 @@
 ## validation, early stopping
 
 from scipy import io, signal
+import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+train_score1 = list()
+train_score2 = list()
+train_score3 = list()
+bs_train_score1 = list()
+bs_train_score2 = list()
+bs_train_score3 = list()
+bs_train_score4 = list()
+bs_train_score5 = list()
 
 total_acc = list()
 np.random.seed(0)
+random.seed(0)
 
 for isub in range(30,60):
     print(isub+1)
@@ -98,14 +110,28 @@ for isub in range(30,60):
     clf1 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf1.fit(new_train_data1, train_label1)
 
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    training_score1 = accuracy_score(train_label1, clf1.predict(new_train_data1))
+    train_score1.append(training_score1)
+
     new_train_data2 = train_data2.reshape((train_data2.shape[0], (train_data2.shape[1] * train_data2.shape[2])))
     clf2 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf2.fit(new_train_data2, train_label2)
+
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    training_score2 = accuracy_score(train_label2, clf2.predict(new_train_data2))
+    train_score2.append(training_score2)
 
     new_train_data3 = train_data3.reshape((train_data3.shape[0], (train_data3.shape[1] * train_data3.shape[2])))
     clf3 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf3.fit(new_train_data3, train_label3)
 
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    training_score3 = accuracy_score(train_label3, clf3.predict(new_train_data3))
+    train_score3.append(training_score3)
+
+    # 정확도 sorting index
+    sort_index = np.argsort([training_score1, training_score2, training_score3])
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -127,9 +153,9 @@ for isub in range(30,60):
             prob1 = clf1.predict_proba(new_test_data)
             prob2 = clf2.predict_proba(new_test_data)
             prob3 = clf3.predict_proba(new_test_data)
-            # prob = clf.predict(new_test_data)
-            total_prob.append(np.mean([prob1[0][0], prob2[0][0], prob3[0][0]]))
-        predicted_label = np.argmin(total_prob)
+            tar_prob = [prob1[0][1], prob2[0][1], prob3[0][1]]
+            total_prob.append((tar_prob[sort_index[0]]*(1/6)+tar_prob[sort_index[1]]*(2/6)+tar_prob[sort_index[2]]*(3/6)))
+        predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
             corr_ans += 1
 
@@ -216,21 +242,44 @@ for isub in range(14):
     clf1 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf1.fit(new_train_data1, train_label1)
 
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    bs_training_score1 = accuracy_score(train_label1, clf1.predict(new_train_data1))
+    bs_train_score1.append(bs_training_score1)
+
     new_train_data2 = train_data2.reshape((train_data2.shape[0], (train_data2.shape[1] * train_data2.shape[2])))
     clf2 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf2.fit(new_train_data2, train_label2)
+
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    bs_training_score2 = accuracy_score(train_label2, clf2.predict(new_train_data2))
+    bs_train_score2.append(bs_training_score2)
 
     new_train_data3 = train_data3.reshape((train_data3.shape[0], (train_data3.shape[1] * train_data3.shape[2])))
     clf3 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf3.fit(new_train_data3, train_label3)
 
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    bs_training_score3 = accuracy_score(train_label3, clf3.predict(new_train_data3))
+    bs_train_score3.append(bs_training_score3)
+
     new_train_data4 = train_data4.reshape((train_data4.shape[0], (train_data4.shape[1] * train_data4.shape[2])))
     clf4 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf4.fit(new_train_data4, train_label4)
 
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    bs_training_score4 = accuracy_score(train_label4, clf4.predict(new_train_data4))
+    bs_train_score4.append(bs_training_score4)
+
     new_train_data5 = train_data5.reshape((train_data5.shape[0], (train_data5.shape[1] * train_data5.shape[2])))
     clf5 = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf5.fit(new_train_data5, train_label5)
+
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    bs_training_score5 = accuracy_score(train_label5, clf5.predict(new_train_data5))
+    bs_train_score5.append(bs_training_score5)
+
+    # 정확도 sorting index
+    bs_sort_index = np.argsort([bs_training_score1, bs_training_score2, bs_training_score3, bs_training_score4, bs_training_score5])
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
@@ -254,8 +303,11 @@ for isub in range(14):
             prob3 = clf3.predict_proba(new_test_data)
             prob4 = clf4.predict_proba(new_test_data)
             prob5 = clf5.predict_proba(new_test_data)
-            total_prob.append(np.mean([prob1[0][0],prob2[0][0],prob3[0][0],prob4[0][0],prob5[0][0]]))
-        predicted_label = np.argmin(total_prob)
+
+            tar_prob = [prob1[0][1], prob2[0][1], prob3[0][1], prob4[0][1], prob5[0][1]]
+            total_prob.append((tar_prob[bs_sort_index[0]] * (1/15) + tar_prob[bs_sort_index[1]] * (2/15) + tar_prob[
+                bs_sort_index[2]] * (3/15) + tar_prob[bs_sort_index[3]]*(4/15) + tar_prob[bs_sort_index[4]]*(5/15)))
+        predicted_label = np.argmax(total_prob)
         if data2['target'][i][0] == (predicted_label+1):
             corr_ans += 1
 
@@ -264,5 +316,5 @@ for isub in range(14):
     print(total_acc)
 
 df = pd.DataFrame(total_acc)
-filename = 'P300_Result_multisvm.csv'
+filename = 'P300_Result_weighted_multisvm.csv'
 df.to_csv(filename)
