@@ -10,7 +10,7 @@ import keras.backend as K
 
 for repeat_num in range(1,11):
     for isub in range(30,60):
-        model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN(full ch)/model_CNN2_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN/model_CNN_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model = load_model(model_name)
 
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -78,8 +78,8 @@ for repeat_num in range(1,11):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/' \
-                   'confusion matrix/P300_Result_CNN_full_ch_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/' \
+                   'confusion matrix/P300_Result_CNN_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
         df.to_csv(filename)
 
         K.clear_session()

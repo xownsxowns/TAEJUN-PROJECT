@@ -9,11 +9,11 @@ import gc
 import keras.backend as K
 
 for repeat_num in range(1,11):
-    for isub in range(14):
-        model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN/model_BS_CNN_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+    for isub in range(30,60):
+        model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN(full ch)/model_CNN2_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model = load_model(model_name)
 
-        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub + 1) + '_EP_training.mat'
+        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
         data = io.loadmat(path)
 
         nch = np.shape(data['ERP'])[0]
@@ -30,7 +30,7 @@ for repeat_num in range(1,11):
             tar_data.append(target)
             tar_label.append(1)
 
-            for j in range(6):
+            for j in range(4):
                 if j == (data['target'][i][0] - 1):
                     continue
                 else:
@@ -38,7 +38,7 @@ for repeat_num in range(1,11):
                     nontar_label.append(0)
 
         tar_data = np.reshape(tar_data, (ntrain, nlen, nch))
-        nontar_data = np.reshape(nontar_data, ((ntrain * 5), nlen, nch))
+        nontar_data = np.reshape(nontar_data, ((ntrain * 3), nlen, nch))
 
         train_vali_data = np.concatenate((tar_data, nontar_data))
         train_vali_label = np.concatenate((tar_label, nontar_label))
@@ -54,7 +54,7 @@ for repeat_num in range(1,11):
             vali_data[:, i, :] = scalers[i].transform(vali_data[:, i, :])
 
         ## Test
-        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub + 1) + '_EP_test.mat'
+        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
         data2 = io.loadmat(path)
         corr_ans = 0
         ntest = np.shape(data2['ERP'])[3]
@@ -63,7 +63,7 @@ for repeat_num in range(1,11):
         total_class = list()
         for i in range(ntest):
             test = data2['ERP'][:, 150:, :, i]
-            for j in range(6):
+            for j in range(4):
                 test_data = test[:, :, j]
                 test_data = np.reshape(test_data, (1, nlen, nch))
                 for k in range(test_data.shape[1]):
@@ -78,8 +78,8 @@ for repeat_num in range(1,11):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/' \
-                   'confusion matrix/P300_Result_CNN_BS_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/' \
+                   'confusion matrix/P300_Result_CNN_full_ch_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
         df.to_csv(filename)
 
         K.clear_session()
