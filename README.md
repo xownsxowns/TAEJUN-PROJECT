@@ -5,4 +5,6 @@ This section is related with UNIST class using Python programming. There were tw
 ## [2] STUDY
 This section is related with my study. I refered many materials for studying data analysis, machine learning, and deep learning.
 ## [3] PROJECT
-This section is related with my project. I did two projects, 'Naver data competition 2018' and 'Korean stock market project with. Anthouse'. Also, i'm doing another project about sentimental analysis.
+This section is related with my project.
+## [4] Paper review
+This section contains paper reviews.
