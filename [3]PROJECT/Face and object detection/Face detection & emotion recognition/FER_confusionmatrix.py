@@ -6,7 +6,7 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation
 from sklearn.metrics import classification_report, confusion_matrix
 from keras.preprocessing.image import ImageDataGenerator
-model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/model2.h5')
+model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
 test_datagen = ImageDataGenerator(rescale=1./255)
 test_set = test_datagen.flow_from_directory('E:/[2] 연구/[3] Facial/test_set',
                                             target_size=(64,64),

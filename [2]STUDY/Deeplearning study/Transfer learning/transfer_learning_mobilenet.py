@@ -12,12 +12,12 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras.optimizers import Adam
 
-# mobilenet have a last layer consisting of 1000 neurons (one for each class)
+# MobileNet have a last layer consisting of 1000 neurons (one for each class)
 # we discard the 1000 neuron layer and add our own last layer for the network.
 # setting (IncludeTop=False) when importing the model.
 
 base_model = MobileNet(weights='imagenet', include_top=False)
-# imports the mobilenet model and discards the last 1000 neuron layers.
+# imports the MobileNet model and discards the last 1000 neuron layers.
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
 x = Dense(1024, activation='relu')(x) # we add dense layers so that the model can learn more complex functions and classifiy for better results.

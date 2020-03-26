@@ -6,7 +6,7 @@ import imutils
 import time
 import cv2
 
-classNames = eval(open('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/labels.txt').read())
+classNames = eval(open('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/object detection/labels.txt').read())
 
 
 
