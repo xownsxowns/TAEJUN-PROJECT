@@ -35,10 +35,10 @@ import gc
 import keras.backend as K
 
 # parameter setting
-
 np.random.seed(0)
 random.seed(0)
 
+ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)
 
 for repeat_num in range(1,11):
@@ -46,11 +46,9 @@ for repeat_num in range(1,11):
     train_score = list()
     train_score_prob = list()
     for isub in range(30,60):
-        adasyn = ADASYN(random_state=5)
+        sm = BorderlineSMOTE(random_state=5)
         print(isub)
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-        # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
-        # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
         data = io.loadmat(path)
 
         nch = np.shape(data['ERP'])[0]
@@ -82,7 +80,7 @@ for repeat_num in range(1,11):
 
         ori_shape = train_vali_data.shape
         reshape_data = np.reshape(train_vali_data, (train_vali_data.shape[0], (train_vali_data.shape[1] * train_vali_data.shape[2])))
-        data_res, y_res = adasyn.fit_resample(reshape_data, train_vali_label)
+        data_res, y_res = sm.fit_resample(reshape_data, train_vali_label)
         data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
         train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res, test_size=0.10, random_state=42)
 
@@ -96,21 +94,20 @@ for repeat_num in range(1,11):
         train_data = np.expand_dims(train_data, axis=1)
         vali_data = np.expand_dims(vali_data, axis=1)
 
-        ch_kernel_size = (1, nch)
-
         ## Build Stacked AutoEncoder
         model = Sequential()
         # channel convolution
-        model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
+        model.add(
+            Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        # model.add(MaxPooling2D(pool_size=(1,2), data_format='channels_first'))
+        model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
         # data point convolution
         model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
-        model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
+        model.add(MaxPooling2D(pool_size=(1, 1), data_format='channels_first'))
         model.add(Flatten())
         model.add(Dense(32))
         model.add(BatchNormalization())
@@ -119,35 +116,18 @@ for repeat_num in range(1,11):
         model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
         print(model.summary())
         early_stopping = EarlyStopping(patience=5)
-        model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+        model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label),
+                  callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/oversampling/model_CNN_adasyn_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/oversampling/B-SMOTE/CNN/model_CNN_bsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model.save(model_name)
 
         ## prob로 하지 않고 그냥 predict로 했을 때
         training_score = accuracy_score(train_label, model.predict_classes(train_data))
         train_score.append(training_score)
 
-        ## prob으로 했을 때
-        tarr = train_data[:50,:,:]
-        ntarr = train_data[50:,:,:]
-        corr_train_ans = 0
-
-        for aa in range(50):
-            tarr_data = tarr[aa,:,:]
-            ntarr_data = ntarr[3*aa:3*(aa+1),:,:]
-            tarr_data = np.expand_dims(tarr_data, axis=0)
-            ttrain_data = np.concatenate((tarr_data, ntarr_data))
-            probb = model.predict_proba(ttrain_data)
-            predicted_tar = np.argmax(probb)
-            if predicted_tar == 0:
-                corr_train_ans += 1
-        train_score_prob.append((corr_train_ans/50)*100)
-
         ## Test
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-        # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
-        # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
         data2 = io.loadmat(path)
         corr_ans = 0
         ntest = np.shape(data2['ERP'])[3]
@@ -173,7 +153,7 @@ for repeat_num in range(1,11):
         print(np.mean(total_acc))
 
     for isub in range(14):
-        adasyn = ADASYN(random_state=5)
+        sm = BorderlineSMOTE(random_state=5)
         print(isub)
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
         # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
@@ -209,11 +189,10 @@ for repeat_num in range(1,11):
 
         ori_shape = train_vali_data.shape
         reshape_data = np.reshape(train_vali_data, (train_vali_data.shape[0], (train_vali_data.shape[1] * train_vali_data.shape[2])))
-        data_res, y_res = adasyn.fit_resample(reshape_data, train_vali_label)
+        data_res, y_res = sm.fit_resample(reshape_data, train_vali_label)
         data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2]))
 
         train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res, test_size=0.10, random_state=42)
-
 
         ## standardScaler 해줘보자
         scalers = {}
@@ -224,20 +203,21 @@ for repeat_num in range(1,11):
 
         train_data = np.expand_dims(train_data, axis=1)
         vali_data = np.expand_dims(vali_data, axis=1)
-        ch_kernel_size = (1, nch)
+
         ## Build Stacked AutoEncoder
         model = Sequential()
         # channel convolution
-        model.add(Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
+        model.add(
+            Conv2D(filters=32, kernel_size=ch_kernel_size, input_shape=(1, nlen, nch), data_format='channels_first'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        # model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
+        model.add(MaxPooling2D(pool_size=(1, 2), data_format='channels_first'))
         # data point convolution
         model.add(Conv2D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
-        model.add(MaxPooling2D(pool_size=(1,1), data_format='channels_first'))
+        model.add(MaxPooling2D(pool_size=(1, 1), data_format='channels_first'))
         model.add(Flatten())
         model.add(Dense(32))
         model.add(BatchNormalization())
@@ -246,35 +226,18 @@ for repeat_num in range(1,11):
         model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
         print(model.summary())
         early_stopping = EarlyStopping(patience=5)
-        model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+        model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label),
+                  callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/oversampling/model_BS_CNN_adasyn_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/oversampling/B-SMOTE/CNN/model_BS_CNN_bsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model.save(model_name)
 
         ## prob로 하지 않고 그냥 predict로 했을 때
         training_score = accuracy_score(train_label, model.predict_classes(train_data))
         train_score.append(training_score)
 
-        ## prob으로 했을 때
-        tarr = train_data[:50, :, :]
-        ntarr = train_data[50:, :, :]
-        corr_train_ans = 0
-
-        for aa in range(50):
-            tarr_data = tarr[aa, :, :]
-            ntarr_data = ntarr[5 * aa:5 * (aa + 1), :, :]
-            tarr_data = np.expand_dims(tarr_data, axis=0)
-            ttrain_data = np.concatenate((tarr_data, ntarr_data))
-            probb = model.predict_proba(ttrain_data)
-            predicted_tar = np.argmax(probb)
-            if predicted_tar == 0:
-                corr_train_ans += 1
-        train_score_prob.append((corr_train_ans / 50) * 100)
-
         ## Test
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-        # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-        # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
         data2 = io.loadmat(path)
         corr_ans = 0
         ntest = np.shape(data2['ERP'])[3]
@@ -300,18 +263,12 @@ for repeat_num in range(1,11):
         print(np.mean(total_acc))
 
     df = pd.DataFrame(total_acc)
-    filename = 'P300_Result_CNN_adasyn_t' + str(repeat_num) + '.csv'
+    filename = 'P300_Result_CNN_borderline_smote_t' + str(repeat_num) + '.csv'
     df.to_csv(filename)
 
     df2 = pd.DataFrame(train_score)
-    filename = 'P300_Result_CNN_adasyn_t' + str(repeat_num) + '_trainscore.csv'
+    filename = 'P300_Result_CNN_borderline_smote_t' + str(repeat_num) + '_trainscore.csv'
     df2.to_csv(filename)
-
-    df3 = pd.DataFrame(train_score_prob)
-    filename = 'P300_Result_CNN_adasyn_t' + str(repeat_num) + '_trainscore_prob.csv'
-    df3.to_csv(filename)
-    print("repeat num:" + str(repeat_num))
-
 
     K.clear_session()
     gc.collect()

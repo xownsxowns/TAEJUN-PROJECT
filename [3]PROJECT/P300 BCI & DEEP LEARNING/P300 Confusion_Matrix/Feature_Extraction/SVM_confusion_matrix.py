@@ -75,6 +75,6 @@ for isub in range(30,60):
 
     confusion_mat = confusion_matrix(total_label, total_class)
     df = pd.DataFrame(confusion_mat)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/SVM result/' \
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/' \
                    'confusion matrix/P300_Result_SVM_confusion_' + str(isub+1) + '.csv'
     df.to_csv(filename)

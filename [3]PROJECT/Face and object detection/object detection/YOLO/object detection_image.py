@@ -2,8 +2,6 @@ import cv2
 import numpy as np
 
 # Load YOLO
-weight_path = "E:/[2] 연구/[4] object detection/yolov3.weights"
-cfg_path = "E:/[2] 연구/[4] object detection/yolov3.cfg"
 net = cv2.dnn.readNet('yolov3.weights','yolov3.cfg')
 
 with open("coco.names","r") as f:
@@ -11,6 +9,8 @@ with open("coco.names","r") as f:
 
 layer_names = net.getLayerNames()
 outputlayers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+
+colors = np.random.uniform(0,255,size=(len(classes), 3))
 
 # loading image
 img = cv2.imread("test.jpg")
@@ -60,5 +60,6 @@ for i in range(len(boxes)):
     if i in indexes:
         x,y,w,h = boxes[i]
         label = str(classes[class_ids[i]])
+        color = colors[i]
         cv2.rectangle(img, (x,y), (x+w,y+h), (0,0,255), 2)
-        cv2.putText(img,label,(x,y+30),font,1,(255,255,255),2)
+        cv2.putText(img,label,(x,y+30),font,1,color,2)

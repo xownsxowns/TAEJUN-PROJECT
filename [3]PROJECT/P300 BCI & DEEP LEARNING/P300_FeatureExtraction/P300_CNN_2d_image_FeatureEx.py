@@ -327,147 +327,147 @@ for isub in range(30,45):
     print(total_acc)
     print(np.mean(total_acc))
 
-# for isub in range(14):
-#     print(isub)
-#     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-#     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-#     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-#     data = io.loadmat(path)
-#
-#     nch = np.shape(data['ERP'])[0]
-#     nlen = 250
-#     ntrain = np.shape(data['ERP'])[3]
-#
-#     tar_data = list()
-#     tar_label = list()
-#     nontar_data = list()
-#     nontar_label = list()
-#
-#     for i in range(ntrain):
-#         target = data['ERP'][:,150:,data['target'][i][0]-1,i]
-#         tar_data.append(target)
-#         tar_label.append(1)
-#
-#         for j in range(6):
-#             if j == (data['target'][i][0]-1):
-#                 continue
-#             else:
-#                 nontar_data.append(data['ERP'][:,150:,j,i])
-#                 nontar_label.append(0)
-#
-#     total_data = np.concatenate((tar_data, nontar_data))
-#     ## standardScaler 해줘보자
-#     scalers = {}
-#     for i in range(total_data.shape[2]):
-#         scalers[i] = StandardScaler()
-#         total_data[:, :, i] = scalers[i].fit_transform(total_data[:, :, i])
-#
-#     tar_data = total_data[:50,:,:]
-#     nontar_data = total_data[50:,:,:]
-#
-#     tar_data_mapping = convert_to_2d_bs(isub, tar_data)
-#     ntar_data_mapping = convert_to_2d_bs(isub, nontar_data)
-#
-#     tar_data_mapping = np.transpose(tar_data_mapping,(0,3,1,2))
-#     ntar_data_mapping = np.transpose(ntar_data_mapping,(0,3,1,2))
-#
-#     train_vali_data = np.concatenate((tar_data_mapping, ntar_data_mapping))
-#     train_vali_label = np.concatenate((tar_label, nontar_label))
-#
-#     train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
-#
-#     train_data = np.expand_dims(train_data, axis=1)
-#     vali_data = np.expand_dims(vali_data, axis=1)
-#
-#     ch_kernel_size = (1, 3, 3)
-#     dp_kernel_size = (10, 1, 1)
-#
-#     ## Build Stacked AutoEncoder
-#     model = Sequential()
-#     # channel convolution
-#     model.add(Conv3D(filters=32, kernel_size=ch_kernel_size,
-#                      input_shape=(1, np.shape(train_data)[2], np.shape(train_data)[3], np.shape(train_data)[4]),
-#                      data_format='channels_first'))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     # model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_first'))
-#     # data point convolution
-#     model.add(Conv3D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     model.add(Dropout(0.5))
-#     model.add(MaxPooling3D(pool_size=(1, 1, 1), data_format='channels_first'))
-#     model.add(Flatten())
-#     model.add(Dense(32))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
-#     model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
-#     print(model.summary())
-#     early_stopping = EarlyStopping(patience=5)
-#     model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
-#
-#     model_name = 'E:/[9] 졸업논문/model/model_BS_CNN_2d_2_train' + str(isub + 1) + '.h5'
-#     # model.save(model_name)
-#
-#     ## prob로 하지 않고 그냥 predict로 했을 때
-#     training_score = accuracy_score(train_label, model.predict_classes(train_data))
-#     train_score.append(training_score)
-#
-#     ## prob으로 했을 때
-#     tarr = train_data[:50,:,:,:,:]
-#     ntarr = train_data[50:,:,:,:,:]
-#     corr_train_ans = 0
-#
-#     for aa in range(50):
-#         tarr_data = tarr[aa,:,:,:,:]
-#         ntarr_data = ntarr[5*aa:5*(aa+1),:,:,:,:]
-#         tarr_data = np.expand_dims(tarr_data, axis=0)
-#         ttrain_data = np.concatenate((tarr_data, ntarr_data))
-#         probb = model.predict_proba(ttrain_data)
-#         predicted_tar = np.argmax(probb)
-#         if predicted_tar == 0:
-#             corr_train_ans += 1
-#     train_score_prob.append((corr_train_ans/50)*100)
-#
-#     ## Test
-#     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-#     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-#     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-#     data2 = io.loadmat(path)
-#     corr_ans = 0
-#     ntest = np.shape(data2['ERP'])[3]
-#
-#     for i in range(ntest):
-#         test = data2['ERP'][:,150:,:,i]
-#         total_prob = list()
-#         for j in range(6):
-#             test_data = test[:,:,j]
-#             test_data = np.expand_dims(test_data, axis=0)
-#             for k in range(test_data.shape[2]):
-#                 test_data[:, :, k] = scalers[k].transform(test_data[:, :, k])
-#             test_data_mapping = convert_to_2d_bs(isub, test_data)
-#             test_data_mapping = np.transpose(test_data_mapping, (0, 3, 1, 2))
-#             test_data = np.expand_dims(test_data_mapping, axis=1)
-#             prob = model.predict_proba(test_data)
-#             total_prob.append(prob[0][0])
-#         predicted_label = np.argmax(total_prob)
-#         if data2['target'][i][0] == (predicted_label+1):
-#             corr_ans += 1
-#
-#     total_acc.append((corr_ans/ntest)*100)
-#     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
-#     print(total_acc)
-#     print(np.mean(total_acc))
+for isub in range(14):
+    print(isub)
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    data = io.loadmat(path)
 
-# df = pd.DataFrame(total_acc)
-# filename = 'P300_Result_CNN_2d_2_3.csv'
-# df.to_csv(filename)
-#
-# df2 = pd.DataFrame(train_score)
-# filename = 'P300_Result_CNN_2d_2_3_trainscore.csv'
-# df2.to_csv(filename)
-#
-# df3 = pd.DataFrame(train_score_prob)
-# filename = 'P300_Result_CNN_2d_2_3_trainscore_prob.csv'
-# df3.to_csv(filename)
+    nch = np.shape(data['ERP'])[0]
+    nlen = 250
+    ntrain = np.shape(data['ERP'])[3]
+
+    tar_data = list()
+    tar_label = list()
+    nontar_data = list()
+    nontar_label = list()
+
+    for i in range(ntrain):
+        target = data['ERP'][:,150:,data['target'][i][0]-1,i]
+        tar_data.append(target)
+        tar_label.append(1)
+
+        for j in range(6):
+            if j == (data['target'][i][0]-1):
+                continue
+            else:
+                nontar_data.append(data['ERP'][:,150:,j,i])
+                nontar_label.append(0)
+
+    total_data = np.concatenate((tar_data, nontar_data))
+    ## standardScaler 해줘보자
+    scalers = {}
+    for i in range(total_data.shape[2]):
+        scalers[i] = StandardScaler()
+        total_data[:, :, i] = scalers[i].fit_transform(total_data[:, :, i])
+
+    tar_data = total_data[:50,:,:]
+    nontar_data = total_data[50:,:,:]
+
+    tar_data_mapping = convert_to_2d_bs(isub, tar_data)
+    ntar_data_mapping = convert_to_2d_bs(isub, nontar_data)
+
+    tar_data_mapping = np.transpose(tar_data_mapping,(0,3,1,2))
+    ntar_data_mapping = np.transpose(ntar_data_mapping,(0,3,1,2))
+
+    train_vali_data = np.concatenate((tar_data_mapping, ntar_data_mapping))
+    train_vali_label = np.concatenate((tar_label, nontar_label))
+
+    train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label, test_size=0.10, random_state=42)
+
+    train_data = np.expand_dims(train_data, axis=1)
+    vali_data = np.expand_dims(vali_data, axis=1)
+
+    ch_kernel_size = (1, 3, 3)
+    dp_kernel_size = (10, 1, 1)
+
+    ## Build Stacked AutoEncoder
+    model = Sequential()
+    # channel convolution
+    model.add(Conv3D(filters=32, kernel_size=ch_kernel_size,
+                     input_shape=(1, np.shape(train_data)[2], np.shape(train_data)[3], np.shape(train_data)[4]),
+                     data_format='channels_first'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    # model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_first'))
+    # data point convolution
+    model.add(Conv3D(filters=64, kernel_size=dp_kernel_size, data_format='channels_first', padding='same'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+    model.add(MaxPooling3D(pool_size=(1, 1, 1), data_format='channels_first'))
+    model.add(Flatten())
+    model.add(Dense(32))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.01)))
+    model.compile(loss='hinge', optimizer='adam', metrics=['accuracy'])
+    print(model.summary())
+    early_stopping = EarlyStopping(patience=5)
+    model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label), callbacks=[early_stopping])
+
+    model_name = 'E:/[9] 졸업논문/model/model_BS_CNN_2d_2_train' + str(isub + 1) + '.h5'
+    # model.save(model_name)
+
+    ## prob로 하지 않고 그냥 predict로 했을 때
+    training_score = accuracy_score(train_label, model.predict_classes(train_data))
+    train_score.append(training_score)
+
+    ## prob으로 했을 때
+    tarr = train_data[:50,:,:,:,:]
+    ntarr = train_data[50:,:,:,:,:]
+    corr_train_ans = 0
+
+    for aa in range(50):
+        tarr_data = tarr[aa,:,:,:,:]
+        ntarr_data = ntarr[5*aa:5*(aa+1),:,:,:,:]
+        tarr_data = np.expand_dims(tarr_data, axis=0)
+        ttrain_data = np.concatenate((tarr_data, ntarr_data))
+        probb = model.predict_proba(ttrain_data)
+        predicted_tar = np.argmax(probb)
+        if predicted_tar == 0:
+            corr_train_ans += 1
+    train_score_prob.append((corr_train_ans/50)*100)
+
+    ## Test
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    data2 = io.loadmat(path)
+    corr_ans = 0
+    ntest = np.shape(data2['ERP'])[3]
+
+    for i in range(ntest):
+        test = data2['ERP'][:,150:,:,i]
+        total_prob = list()
+        for j in range(6):
+            test_data = test[:,:,j]
+            test_data = np.expand_dims(test_data, axis=0)
+            for k in range(test_data.shape[2]):
+                test_data[:, :, k] = scalers[k].transform(test_data[:, :, k])
+            test_data_mapping = convert_to_2d_bs(isub, test_data)
+            test_data_mapping = np.transpose(test_data_mapping, (0, 3, 1, 2))
+            test_data = np.expand_dims(test_data_mapping, axis=1)
+            prob = model.predict_proba(test_data)
+            total_prob.append(prob[0][0])
+        predicted_label = np.argmax(total_prob)
+        if data2['target'][i][0] == (predicted_label+1):
+            corr_ans += 1
+
+    total_acc.append((corr_ans/ntest)*100)
+    print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
+    print(total_acc)
+    print(np.mean(total_acc))
+
+df = pd.DataFrame(total_acc)
+filename = 'P300_Result_CNN_2d_2_3.csv'
+df.to_csv(filename)
+
+df2 = pd.DataFrame(train_score)
+filename = 'P300_Result_CNN_2d_2_3_trainscore.csv'
+df2.to_csv(filename)
+
+df3 = pd.DataFrame(train_score_prob)
+filename = 'P300_Result_CNN_2d_2_3_trainscore_prob.csv'
+df3.to_csv(filename)

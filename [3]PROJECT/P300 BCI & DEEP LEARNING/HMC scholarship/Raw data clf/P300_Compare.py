@@ -1,6 +1,6 @@
 
 ## P300 Classification
-## SVM vs CNN
+## NO vs CNN
 
 # Epoch Sub1 ~ Sub30: TV
 # Epoch Sub31 ~ Sub45: Doorlock
