@@ -194,7 +194,7 @@ def convert_to_2d_bs(sub_num, input):
     return mapp
 
 
-for isub in range(30,45):
+for isub in range(30,60):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'

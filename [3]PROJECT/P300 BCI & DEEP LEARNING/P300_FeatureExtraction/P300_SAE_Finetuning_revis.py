@@ -135,11 +135,11 @@ for isub in range(50,60):
         test = data2['ERP'][:,150:,:,i]
         total_prob = list()
         for j in range(4):
-            test_data = test[:,:,j]
-            test_data = np.reshape(test_data, (1,nlen,nch))
+            test_data = test[:, :, j]
+            test_data = np.reshape(test_data, (1, nlen, nch))
             for k in range(test_data.shape[1]):
                 test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
-            test_data = np.reshape(test_data, (test_data.shape[0], test_data.shape[1]*test_data.shape[2]))
+            test_data = np.reshape(test_data, (test_data.shape[0], test_data.shape[1] * test_data.shape[2]))
             prob = model.predict(test_data)
             total_prob.append(prob[0][0])
         predicted_label = np.argmax(total_prob)

@@ -41,7 +41,7 @@ random.seed(0)
 ch_kernel_size = (1, 5)
 dp_kernel_size = (10, 1)
 
-for repeat_num in range(1,11):
+for repeat_num in range(10,11):
     total_acc = list()
     train_score = list()
     train_score_prob = list()

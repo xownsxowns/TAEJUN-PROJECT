@@ -229,7 +229,7 @@ for repeat_num in range(1,11):
         model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label),
                   callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/undersampling/NCR/CNNmodel_BS_CNN_ncr_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/undersampling/NCR/CNN/model_BS_CNN_ncr_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model.save(model_name)
         ## classifier
         ## prob로 하지 않고 그냥 predict로 했을 때
