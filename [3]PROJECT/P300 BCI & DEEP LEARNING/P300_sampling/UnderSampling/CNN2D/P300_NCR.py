@@ -195,7 +195,7 @@ def convert_to_2d_bs(sub_num, input):
     return mapp
 
 
-for repeat_num in range(1, 11):
+for repeat_num in range(1, 2):
     total_acc = list()
     train_score = list()
     for isub in range(30, 60):
@@ -235,8 +235,12 @@ for repeat_num in range(1, 11):
         tar_data = total_data[:50, :, :]
         nontar_data = total_data[50:, :, :]
 
-        tar_data_mapping = convert_to_2d_doorlock_light(isub, tar_data)
-        ntar_data_mapping = convert_to_2d_doorlock_light(isub, nontar_data)
+        nnnn = 'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + '2D_Mapped_tar.npz'
+        nnnnn =  'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + '2D_Mapped_ntar.npz'
+        tar_data_mapping_load = np.load(nnnn)
+        tar_data_mapping = tar_data_mapping_load['arr_0']
+        ntar_data_mapping_load = np.load(nnnnn)
+        ntar_data_mapping = ntar_data_mapping_load['arr_0']
 
         tar_data_mapping = np.transpose(tar_data_mapping, (0, 3, 1, 2))
         ntar_data_mapping = np.transpose(ntar_data_mapping, (0, 3, 1, 2))
@@ -250,7 +254,7 @@ for repeat_num in range(1, 11):
         data_res, y_res = ncr.fit_resample(reshape_data, train_vali_label)
         data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2], ori_shape[3]))
 
-        train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label,
+        train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res,
                                                                           test_size=0.10, random_state=42)
 
         train_data = np.expand_dims(train_data, axis=1)
@@ -324,6 +328,9 @@ for repeat_num in range(1, 11):
         K.clear_session()
         gc.collect()
         del model
+        del tar_data_mapping
+        del ntar_data_mapping
+        del train_vali_data
 
     for isub in range(14):
         ncr = NeighbourhoodCleaningRule(random_state=5)
@@ -362,8 +369,12 @@ for repeat_num in range(1, 11):
         tar_data = total_data[:50, :, :]
         nontar_data = total_data[50:, :, :]
 
-        tar_data_mapping = convert_to_2d_bs(isub, tar_data)
-        ntar_data_mapping = convert_to_2d_bs(isub, nontar_data)
+        nnnn = 'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + 'BS_2D_Mapped_tar.npz'
+        nnnnn =  'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + 'BS_2D_Mapped_ntar.npz'
+        tar_data_mapping_load = np.load(nnnn)
+        tar_data_mapping = tar_data_mapping_load['arr_0']
+        ntar_data_mapping_load = np.load(nnnnn)
+        ntar_data_mapping = ntar_data_mapping_load['arr_0']
 
         tar_data_mapping = np.transpose(tar_data_mapping, (0, 3, 1, 2))
         ntar_data_mapping = np.transpose(ntar_data_mapping, (0, 3, 1, 2))
@@ -377,7 +388,7 @@ for repeat_num in range(1, 11):
         data_res, y_res = ncr.fit_resample(reshape_data, train_vali_label)
         data_res = np.reshape(data_res, (data_res.shape[0], ori_shape[1], ori_shape[2], ori_shape[3]))
 
-        train_data, vali_data, train_label, vali_label = train_test_split(train_vali_data, train_vali_label,
+        train_data, vali_data, train_label, vali_label = train_test_split(data_res, y_res,
                                                                           test_size=0.10, random_state=42)
 
         train_data = np.expand_dims(train_data, axis=1)
@@ -451,6 +462,9 @@ for repeat_num in range(1, 11):
         K.clear_session()
         gc.collect()
         del model
+        del tar_data_mapping
+        del ntar_data_mapping
+        del train_vali_data
 
     df = pd.DataFrame(total_acc)
     filename = 'P300_Result_CNN2D_ncr_t' + str(repeat_num) + '.csv'

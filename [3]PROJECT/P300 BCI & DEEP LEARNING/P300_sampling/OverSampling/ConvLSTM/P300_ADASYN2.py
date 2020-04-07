@@ -39,7 +39,7 @@ import keras.backend as K
 np.random.seed(0)
 random.seed(0)
 
-for repeat_num in range(1,11):
+for repeat_num in range(1,2):
     total_acc = list()
     train_score = list()
     for isub in range(30,60):

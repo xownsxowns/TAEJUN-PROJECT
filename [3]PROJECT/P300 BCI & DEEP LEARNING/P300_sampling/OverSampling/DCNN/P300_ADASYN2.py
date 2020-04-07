@@ -220,7 +220,7 @@ def conv5_layer(x):
 
     return x
 
-for repeat_num in range(1,11):
+for repeat_num in range(1,2):
     total_acc = list()
     train_score = list()
     train_score_prob = list()

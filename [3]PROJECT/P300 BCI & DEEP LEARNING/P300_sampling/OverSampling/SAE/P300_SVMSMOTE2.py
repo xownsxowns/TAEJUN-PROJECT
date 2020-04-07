@@ -40,7 +40,7 @@ import keras.backend as K
 np.random.seed(0)
 random.seed(0)
 
-for repeat_num in range(1,11):
+for repeat_num in range(1,2):
     total_acc = list()
     train_score = list()
     for isub in range(30,60):
@@ -176,6 +176,7 @@ for repeat_num in range(1,11):
         gc.collect()
         del model
         del autoencoder
+        del encoder
 
     for isub in range(14):
         sm = SVMSMOTE(random_state=5)
@@ -223,9 +224,6 @@ for repeat_num in range(1,11):
             scalers[i] = StandardScaler()
             train_data[:, i, :] = scalers[i].fit_transform(train_data[:, i, :])
             vali_data[:, i, :] = scalers[i].transform(vali_data[:, i, :])
-
-        train_data = np.expand_dims(train_data, axis=1)
-        vali_data = np.expand_dims(vali_data, axis=1)
 
         train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1] * train_data.shape[2]))
         vali_data = np.reshape(vali_data, (vali_data.shape[0], vali_data.shape[1] * vali_data.shape[2]))
@@ -314,6 +312,7 @@ for repeat_num in range(1,11):
         gc.collect()
         del model2
         del autoencoder2
+        del encoder
 
     df = pd.DataFrame(total_acc)
     filename = 'P300_Result_SAE_svmsmote_t' + str(repeat_num) + '.csv'
