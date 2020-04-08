@@ -421,7 +421,7 @@ for repeat_num in range(1, 2):
         model.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label),
                   callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/oversampling/B-SMOTE/CNN2D/model_BS_CNN2D_bsmote_t' + str(
+        model_name = 'E:/[9] 졸업논문/model/oversampling/SMOTE/CNN2D/model_BS_CNN2D_bsmote_t' + str(
             repeat_num) + '_train' + str(isub + 1) + '.h5'
         model.save(model_name)
 
