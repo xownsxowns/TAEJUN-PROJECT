@@ -24,8 +24,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from imblearn.over_sampling import *
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
 total_acc = list()
@@ -34,7 +32,6 @@ train_acc = list()
 np.random.seed(0)
 
 for isub in range(30,60):
-    sam = SMOTE(random_state=5)
     print(isub+1)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
@@ -111,10 +108,9 @@ for isub in range(30,60):
     total_ntar_data = np.concatenate((local_peak_ntar, local_peak_latency_ntar, mean_amp_ntar), axis=1)
     train_data = np.concatenate((total_tar_data, total_ntar_data))
     train_label = np.concatenate((tar_label, nontar_label))
-    data_res, y_res = sam.fit_resample(train_data, train_label)
 
     clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
-    clf.fit(data_res, y_res)
+    clf.fit(train_data, train_label)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -124,7 +120,6 @@ for isub in range(30,60):
 
     total_label = list()
     total_class = list()
-
     for ii in range(ntest):
         baseline_test = data2['ERP'][:,0:100,:,ii]
         baseline_test_mean = np.mean(baseline_test,axis=1,keepdims=True)
@@ -162,13 +157,12 @@ for isub in range(30,60):
 
     confusion_mat = confusion_matrix(total_label, total_class)
     df = pd.DataFrame(confusion_mat)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling' \
-               '/CONFUSION/SMOTE/RAW_confusion_' + str(isub+1) + '.csv'
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+               'P300_Result_RAW_confusion_' + str(isub + 1) + '.csv'
     df.to_csv(filename)
 
 # BS has 6 icons
 for isub in range(14):
-    sam = SMOTE(random_state=5)
     print(isub+1)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
@@ -243,10 +237,9 @@ for isub in range(14):
     total_ntar_data = np.concatenate((local_peak_ntar, local_peak_latency_ntar, mean_amp_ntar), axis=1)
     train_data = np.concatenate((total_tar_data, total_ntar_data))
     train_label = np.concatenate((tar_label, nontar_label))
-    data_res, y_res = sam.fit_resample(train_data, train_label)
 
     clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
-    clf.fit(data_res, y_res)
+    clf.fit(train_data, train_label)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
@@ -256,7 +249,6 @@ for isub in range(14):
 
     total_label = list()
     total_class = list()
-
     for ii in range(ntest):
         baseline_test = data2['ERP'][:,0:100,:,ii]
         baseline_test_mean = np.mean(baseline_test,axis=1,keepdims=True)
@@ -294,6 +286,6 @@ for isub in range(14):
 
     confusion_mat = confusion_matrix(total_label, total_class)
     df = pd.DataFrame(confusion_mat)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE' \
-               '/RAW_BS_confusion_' + str(isub + 1) + '.csv'
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+               'P300_Result_BS_RAW_confusion_' + str(isub + 1) + '.csv'
     df.to_csv(filename)

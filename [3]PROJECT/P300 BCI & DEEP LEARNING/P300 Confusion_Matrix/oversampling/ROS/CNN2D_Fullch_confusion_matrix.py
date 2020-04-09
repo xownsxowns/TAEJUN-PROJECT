@@ -335,13 +335,13 @@ for repeat_num in range(1,2):
                 else:
                     total_label.append(0)
 
-            confusion_mat = confusion_matrix(total_label, total_class)
-            df = pd.DataFrame(confusion_mat)
-            filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/' \
-                       'CNN2D_fullch_BS_ros_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
-            df.to_csv(filename)
+        confusion_mat = confusion_matrix(total_label, total_class)
+        df = pd.DataFrame(confusion_mat)
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/' \
+                   'CNN2D_fullch_BS_ros_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
+        df.to_csv(filename)
 
-            K.clear_session()
-            gc.collect()
-            del model
+        K.clear_session()
+        gc.collect()
+        del model
 

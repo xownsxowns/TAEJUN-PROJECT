@@ -15,8 +15,8 @@ random.seed(0)
 
 for repeat_num in range(1,2):
     for isub in range(30,60):
-        ros = RandomOverSampler(random_state=5)
-        model_name = 'E:/[9] 졸업논문/model/oversampling/ROS/CNN Full ch/model_CNN_ros_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        ros = SVMSMOTE(random_state=5)
+        model_name = 'E:/[9] 졸업논문/model/oversampling/SVMSMOTE/CNN Full ch/model_CNN_svmsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model = load_model(model_name)
 
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -90,8 +90,8 @@ for repeat_num in range(1,2):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/' \
-                   'CNN_fullch_ros_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
+                   'CNN_fullch_svmsmote_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
         df.to_csv(filename)
 
         K.clear_session()
@@ -99,8 +99,8 @@ for repeat_num in range(1,2):
         del model
 
     for isub in range(14):
-        ros = RandomOverSampler(random_state=5)
-        model_name = 'E:/[9] 졸업논문/model/oversampling/ROS/CNN Full ch/model_BS_CNN_ros_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        ros = SVMSMOTE(random_state=5)
+        model_name = 'E:/[9] 졸업논문/model/oversampling/SVMSMOTE/CNN Full ch/model_BS_CNN_svmsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model = load_model(model_name)
 
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub + 1) + '_EP_training.mat'
@@ -174,8 +174,8 @@ for repeat_num in range(1,2):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/' \
-                   'CNN_BS_fullch_ros_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
+                   'CNN_BS_fullch_svmsmote_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
         df.to_csv(filename)
 
         K.clear_session()

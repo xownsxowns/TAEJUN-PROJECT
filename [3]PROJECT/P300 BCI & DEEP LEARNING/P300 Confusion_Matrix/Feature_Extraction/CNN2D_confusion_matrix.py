@@ -1,44 +1,20 @@
-
-## P300 Classification
-## CNN feature extraction
-
-# Epoch Sub1 ~ Sub30: TV
-# Epoch Sub31 ~ Sub45: Doorlock
-# Epoch Sub46 ~ Sub60: Lamp
-# Epoch BS Sub 1 ~Sub45: Bluetooth speaker
-
-# 1. Preprocessing
-#  1) 0.5Hz highpass filter (FIR)
-#  2) Bad channel rejection (1Hz lowpass filter , 2nd order Butter. , Corr. coeff < 0.4 , 70 % above)
-#  3) Common average re-reference
-#  4) 50Hz lowpass filter (FIR)
-#  5) Artifact subspace reconstruction (cutoff: 10)
-#
-# 2. Data
-#    ERP : [channel x time x stimulus type x block] (training: 50 block, test: 30 block)
-#    target : [block x 1] target stimulus of each block
-
 from scipy import io, signal
 import pandas as pd
 import numpy as np
 import random
-from keras import optimizers
-from keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, Flatten, Conv3D, MaxPooling3D, BatchNormalization, Activation, AveragePooling2D
-from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from keras.regularizers import l2
-from imblearn.over_sampling import *
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from keras.models import load_model
 import gc
 import keras.backend as K
-from sklearn.metrics import confusion_matrix
 
 # parameter setting
-
+total_acc = list()
+train_score = list()
+train_score_prob = list()
 np.random.seed(0)
 random.seed(0)
+
 
 def convert_to_2d_doorlock_light(sub_num, input):
     ch_path1 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_doorlock'
@@ -194,154 +170,152 @@ def convert_to_2d_bs(sub_num, input):
                     mapp[itrial, 6, 7, timepoint] = input[itrial][np.where(sub_ch_list==31)[0][0], timepoint]
     return mapp
 
+for isub in range(30,60):
+    print(isub)
+    model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN_2d/model_CNN_2d_2_train' + str(
+        isub + 1) + '.h5'
+    model = load_model(model_name)
 
-for repeat_num in range(1,2):
-    total_acc = list()
-    train_score = list()
-    for isub in range(30,60):
-        adasyn = SVMSMOTE(random_state=5)
-        model_name = 'E:/[9] 졸업논문/model/oversampling/SVMSMOTE/CNN2D/model_CNN2D_svmsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
-        model = load_model(model_name)
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    data = io.loadmat(path)
 
-        print(isub)
-        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-        data = io.loadmat(path)
+    nch = np.shape(data['ERP'])[0]
+    nlen = 250
+    ntrain = np.shape(data['ERP'])[3]
 
-        nch = np.shape(data['ERP'])[0]
-        nlen = 250
-        ntrain = np.shape(data['ERP'])[3]
+    tar_data = list()
+    tar_label = list()
+    nontar_data = list()
+    nontar_label = list()
 
-        tar_data = list()
-        tar_label = list()
-        nontar_data = list()
-        nontar_label = list()
+    for i in range(ntrain):
+        target = data['ERP'][:,150:,data['target'][i][0]-1,i]
+        tar_data.append(target)
+        tar_label.append(1)
 
-        for i in range(ntrain):
-            target = data['ERP'][:, 150:, data['target'][i][0] - 1, i]
-            tar_data.append(target)
-            tar_label.append(1)
+        for j in range(4):
+            if j == (data['target'][i][0]-1):
+                continue
+            else:
+                nontar_data.append(data['ERP'][:,150:,j,i])
+                nontar_label.append(0)
 
-            for j in range(4):
-                if j == (data['target'][i][0] - 1):
-                    continue
-                else:
-                    nontar_data.append(data['ERP'][:, 150:, j, i])
-                    nontar_label.append(0)
+    total_data = np.concatenate((tar_data, nontar_data))
+    ## standardScaler 해줘보자
+    scalers = {}
+    for i in range(total_data.shape[2]):
+        scalers[i] = StandardScaler()
+        total_data[:, :, i] = scalers[i].fit_transform(total_data[:, :, i])
 
-        total_data = np.concatenate((tar_data, nontar_data))
-        ## standardScaler 해줘보자
-        scalers = {}
-        for i in range(total_data.shape[2]):
-            scalers[i] = StandardScaler()
-            total_data[:, :, i] = scalers[i].fit_transform(total_data[:, :, i])
+    ## Test
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    data2 = io.loadmat(path)
+    corr_ans = 0
+    ntest = np.shape(data2['ERP'])[3]
 
-        ## Test
-        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-        data2 = io.loadmat(path)
-        corr_ans = 0
-        ntest = np.shape(data2['ERP'])[3]
+    total_label = list()
+    total_class = list()
+    for i in range(ntest):
+        test = data2['ERP'][:,150:,:,i]
+        total_prob = list()
+        for j in range(4):
+            test_data = test[:,:,j]
+            test_data = np.expand_dims(test_data, axis=0)
+            for k in range(test_data.shape[2]):
+                test_data[:, :, k] = scalers[k].transform(test_data[:, :, k])
+            test_data_mapping = convert_to_2d_doorlock_light(isub, test_data)
+            test_data_mapping = np.transpose(test_data_mapping, (0, 3, 1, 2))
+            test_data = np.expand_dims(test_data_mapping, axis=1)
+            predicted_class = model.predict_classes(test_data)
+            total_class.append(predicted_class[0][0])
+            if j == (data2['target'][i][0] - 1):
+                total_label.append(1)
+            else:
+                total_label.append(0)
 
-        total_label = list()
-        total_class = list()
+    confusion_mat = confusion_matrix(total_label, total_class)
+    df = pd.DataFrame(confusion_mat)
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+               '/P300_Result_CNN_2D_confusion_' + str(isub + 1) + '.csv'
+    df.to_csv(filename)
 
-        for i in range(ntest):
-            test = data2['ERP'][:,150:,:,i]
-            total_prob = list()
-            for j in range(4):
-                test_data = test[:, :, j]
-                test_data = np.expand_dims(test_data, axis=0)
-                for k in range(test_data.shape[2]):
-                    test_data[:, :, k] = scalers[k].transform(test_data[:, :, k])
-                test_data_mapping = convert_to_2d_doorlock_light(isub, test_data)
-                test_data_mapping = np.transpose(test_data_mapping, (0, 3, 1, 2))
-                test_data = np.expand_dims(test_data_mapping, axis=1)
-                predicted_class = model.predict_classes(test_data)
-                total_class.append(predicted_class[0][0])
-                if j == (data2['target'][i][0]-1):
-                    total_label.append(1)
-                else:
-                    total_label.append(0)
+    K.clear_session()
+    gc.collect()
+    del model
 
-        confusion_mat = confusion_matrix(total_label, total_class)
-        df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
-                   'CNN2D_svmsmote_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
-        df.to_csv(filename)
+for isub in range(14):
+    print(isub)
+    model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN_2d/model_BS_CNN_2d_2_train' + str(
+        isub + 1) + '.h5'
+    model = load_model(model_name)
 
-        K.clear_session()
-        gc.collect()
-        del model
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    data = io.loadmat(path)
 
-    for isub in range(14):
-        adasyn = SVMSMOTE(random_state=5)
-        model_name = 'E:/[9] 졸업논문/model/oversampling/SVMSMOTE/CNN2D/model_BS_CNN2D_svmsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
-        model = load_model(model_name)
+    nch = np.shape(data['ERP'])[0]
+    nlen = 250
+    ntrain = np.shape(data['ERP'])[3]
 
-        print(isub)
-        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-        data = io.loadmat(path)
+    tar_data = list()
+    tar_label = list()
+    nontar_data = list()
+    nontar_label = list()
 
-        nch = np.shape(data['ERP'])[0]
-        nlen = 250
-        ntrain = np.shape(data['ERP'])[3]
+    for i in range(ntrain):
+        target = data['ERP'][:,150:,data['target'][i][0]-1,i]
+        tar_data.append(target)
+        tar_label.append(1)
 
-        tar_data = list()
-        tar_label = list()
-        nontar_data = list()
-        nontar_label = list()
+        for j in range(6):
+            if j == (data['target'][i][0]-1):
+                continue
+            else:
+                nontar_data.append(data['ERP'][:,150:,j,i])
+                nontar_label.append(0)
 
-        for i in range(ntrain):
-            target = data['ERP'][:, 150:, data['target'][i][0] - 1, i]
-            tar_data.append(target)
-            tar_label.append(1)
+    total_data = np.concatenate((tar_data, nontar_data))
+    ## standardScaler 해줘보자
+    scalers = {}
+    for i in range(total_data.shape[2]):
+        scalers[i] = StandardScaler()
+        total_data[:, :, i] = scalers[i].fit_transform(total_data[:, :, i])
 
-            for j in range(6):
-                if j == (data['target'][i][0] - 1):
-                    continue
-                else:
-                    nontar_data.append(data['ERP'][:, 150:, j, i])
-                    nontar_label.append(0)
+    tar_data = total_data[:50,:,:]
+    nontar_data = total_data[50:,:,:]
 
-        total_data = np.concatenate((tar_data, nontar_data))
-        ## standardScaler 해줘보자
-        scalers = {}
-        for i in range(total_data.shape[2]):
-            scalers[i] = StandardScaler()
-            total_data[:, :, i] = scalers[i].fit_transform(total_data[:, :, i])
+    ## Test
+    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    data2 = io.loadmat(path)
+    corr_ans = 0
+    ntest = np.shape(data2['ERP'])[3]
 
-        ## Test
-        path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-        data2 = io.loadmat(path)
-        corr_ans = 0
-        ntest = np.shape(data2['ERP'])[3]
+    total_label = list()
+    total_class = list()
 
-        total_label = list()
-        total_class = list()
-        for i in range(ntest):
-            test = data2['ERP'][:,150:,:,i]
-            total_prob = list()
-            for j in range(6):
-                test_data = test[:, :, j]
-                test_data = np.expand_dims(test_data, axis=0)
-                for k in range(test_data.shape[2]):
-                    test_data[:, :, k] = scalers[k].transform(test_data[:, :, k])
-                test_data_mapping = convert_to_2d_bs(isub, test_data)
-                test_data_mapping = np.transpose(test_data_mapping, (0, 3, 1, 2))
-                test_data = np.expand_dims(test_data_mapping, axis=1)
-                predicted_class = model.predict_classes(test_data)
-                total_class.append(predicted_class[0][0])
-                if j == (data2['target'][i][0] - 1):
-                    total_label.append(1)
-                else:
-                    total_label.append(0)
+    for i in range(ntest):
+        test = data2['ERP'][:,150:,:,i]
+        total_prob = list()
+        for j in range(6):
+            test_data = test[:,:,j]
+            test_data = np.expand_dims(test_data, axis=0)
+            for k in range(test_data.shape[2]):
+                test_data[:, :, k] = scalers[k].transform(test_data[:, :, k])
+            test_data_mapping = convert_to_2d_bs(isub, test_data)
+            test_data_mapping = np.transpose(test_data_mapping, (0, 3, 1, 2))
+            test_data = np.expand_dims(test_data_mapping, axis=1)
+            predicted_class = model.predict_classes(test_data)
+            total_class.append(predicted_class[0][0])
+            if j == (data2['target'][i][0] - 1):
+                total_label.append(1)
+            else:
+                total_label.append(0)
 
-        confusion_mat = confusion_matrix(total_label, total_class)
-        df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
-                   'CNN2D_BS_svmsmote_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
-        df.to_csv(filename)
+    confusion_mat = confusion_matrix(total_label, total_class)
+    df = pd.DataFrame(confusion_mat)
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+               '/P300_Result_BS_CNN_2d_confusion_' + str(isub + 1) + '.csv'
+    df.to_csv(filename)
 
-        K.clear_session()
-        gc.collect()
-        del model
-
+    K.clear_session()
+    gc.collect()
+    del model

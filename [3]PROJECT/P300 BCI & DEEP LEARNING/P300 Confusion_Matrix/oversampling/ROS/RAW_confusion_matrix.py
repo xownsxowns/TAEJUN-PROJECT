@@ -292,8 +292,8 @@ for isub in range(14):
             else:
                 total_label.append(0)
 
-        confusion_mat = confusion_matrix(total_label, total_class)
-        df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS' \
-                   '/RAW_BS_confusion_' + str(isub + 1) + '.csv'
-        df.to_csv(filename)
+    confusion_mat = confusion_matrix(total_label, total_class)
+    df = pd.DataFrame(confusion_mat)
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS' \
+               '/RAW_BS_confusion_' + str(isub + 1) + '.csv'
+    df.to_csv(filename)

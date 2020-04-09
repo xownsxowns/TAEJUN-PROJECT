@@ -199,7 +199,7 @@ for repeat_num in range(1, 2):
     total_acc = list()
     train_score = list()
     for isub in range(30, 60):
-        ncr = NeighbourhoodCleaningRule(random_state=5)
+        ncr = NeighbourhoodCleaningRule()
         print(isub)
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
         data = io.loadmat(path)
@@ -333,7 +333,7 @@ for repeat_num in range(1, 2):
         del train_vali_data
 
     for isub in range(14):
-        ncr = NeighbourhoodCleaningRule(random_state=5)
+        ncr = NeighbourhoodCleaningRule()
         print(isub)
         path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub + 1) + '_EP_training.mat'
         data = io.loadmat(path)

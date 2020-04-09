@@ -30,6 +30,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
 from sklearn.metrics import accuracy_score
+import gc
+import keras.backend as K
 
 # parameter setting
 total_acc = list()
@@ -229,8 +231,12 @@ for isub in range(30,60):
     tar_data = total_data[:50,:,:]
     nontar_data = total_data[50:,:,:]
 
-    tar_data_mapping = convert_to_2d_doorlock_light(isub, tar_data)
-    ntar_data_mapping = convert_to_2d_doorlock_light(isub, nontar_data)
+    nnnn = 'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + '2D_Mapped_tar.npz'
+    nnnnn = 'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + '2D_Mapped_ntar.npz'
+    tar_data_mapping_load = np.load(nnnn)
+    tar_data_mapping = tar_data_mapping_load['arr_0']
+    ntar_data_mapping_load = np.load(nnnnn)
+    ntar_data_mapping = ntar_data_mapping_load['arr_0']
 
     tar_data_mapping = np.transpose(tar_data_mapping,(0,3,1,2))
     ntar_data_mapping = np.transpose(ntar_data_mapping,(0,3,1,2))
@@ -322,6 +328,13 @@ for isub in range(30,60):
     print(total_acc)
     print(np.mean(total_acc))
 
+    K.clear_session()
+    gc.collect()
+    del model
+    del tar_data_mapping
+    del ntar_data_mapping
+    del train_vali_data
+
 for isub in range(14):
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
@@ -358,8 +371,12 @@ for isub in range(14):
     tar_data = total_data[:50,:,:]
     nontar_data = total_data[50:,:,:]
 
-    tar_data_mapping = convert_to_2d_bs(isub, tar_data)
-    ntar_data_mapping = convert_to_2d_bs(isub, nontar_data)
+    nnnn = 'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + 'BS_2D_Mapped_tar.npz'
+    nnnnn = 'E:/[9] 졸업논문/2D_MAP/sub' + str(isub) + 'BS_2D_Mapped_ntar.npz'
+    tar_data_mapping_load = np.load(nnnn)
+    tar_data_mapping = tar_data_mapping_load['arr_0']
+    ntar_data_mapping_load = np.load(nnnnn)
+    ntar_data_mapping = ntar_data_mapping_load['arr_0']
 
     tar_data_mapping = np.transpose(tar_data_mapping,(0,3,1,2))
     ntar_data_mapping = np.transpose(ntar_data_mapping,(0,3,1,2))
@@ -450,6 +467,13 @@ for isub in range(14):
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
     print(np.mean(total_acc))
+
+    K.clear_session()
+    gc.collect()
+    del model
+    del tar_data_mapping
+    del ntar_data_mapping
+    del train_vali_data
 
 df = pd.DataFrame(total_acc)
 filename = 'P300_Result_CNN_2d_fullch.csv'
