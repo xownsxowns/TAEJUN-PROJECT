@@ -26,6 +26,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
 # parameter setting
 total_acc = list()
@@ -37,8 +38,6 @@ for isub in range(30,60):
     sm = BorderlineSMOTE(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -80,33 +79,19 @@ for isub in range(30,60):
 
     clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf.fit(data_res, y_res)
+    cm = confusion_matrix(y_res, clf.predict(data_res))
+
+    df = pd.DataFrame(cm)
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+               'P300_Result_SVM_bsmote_confusion_' + str(isub + 1) + '_train.csv'
+    df.to_csv(filename)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
     training_score = accuracy_score(y_res, clf.predict(data_res))
     train_score.append(training_score)
 
-    ## prob으로 했을 때
-    tarr = train_data[:50,:,:]
-    ntarr = train_data[50:,:,:]
-    corr_train_ans = 0
-
-    for aa in range(50):
-        tarr_data = tarr[aa,:,:]
-        ntarr_data = ntarr[3*aa:3*(aa+1),:,:]
-        tarr_data = np.reshape(tarr_data, (tarr_data.shape[0]*tarr_data.shape[1]))
-        tarr_data = np.expand_dims(tarr_data, axis=0)
-        ntarr_data = np.reshape(ntarr_data, (ntarr_data.shape[0],(ntarr_data.shape[1]*ntarr_data.shape[2])))
-        ttrain_data = np.concatenate((tarr_data, ntarr_data))
-        probb = clf.predict_proba(ttrain_data)
-        predicted_tar = np.argmin(probb[:,0])
-        if predicted_tar == 0:
-            corr_train_ans += 1
-    train_score_prob.append((corr_train_ans/50)*100)
-
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -135,8 +120,6 @@ for isub in range(14):
     sm = BorderlineSMOTE(random_state=5)
     print(isub)
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -179,27 +162,17 @@ for isub in range(14):
     clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
     clf.fit(data_res, y_res)
 
+    cm = confusion_matrix(y_res, clf.predict(data_res))
+
+    df = pd.DataFrame(cm)
+    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+               'P300_Result_BS_SVM_bsmote_confusion_' + str(isub + 1) + '_train.csv'
+    df.to_csv(filename)
+
     ## prob로 하지 않고 그냥 predict로 했을 때
     training_score = accuracy_score(y_res, clf.predict(data_res))
     train_score.append(training_score)
 
-    ## prob으로 했을 때
-    tarr = train_data[:50, :, :]
-    ntarr = train_data[50:, :, :]
-    corr_train_ans = 0
-
-    for aa in range(50):
-        tarr_data = tarr[aa,:,:]
-        ntarr_data = ntarr[5*aa:5*(aa+1),:,:]
-        tarr_data = np.reshape(tarr_data, (tarr_data.shape[0]*tarr_data.shape[1]))
-        tarr_data = np.expand_dims(tarr_data, axis=0)
-        ntarr_data = np.reshape(ntarr_data, (ntarr_data.shape[0],(ntarr_data.shape[1]*ntarr_data.shape[2])))
-        ttrain_data = np.concatenate((tarr_data, ntarr_data))
-        probb = clf.predict_proba(ttrain_data)
-        predicted_tar = np.argmin(probb[:,0])
-        if predicted_tar == 0:
-            corr_train_ans += 1
-    train_score_prob.append((corr_train_ans/50)*100)
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
@@ -228,14 +201,10 @@ for isub in range(14):
     print(total_acc)
     print(np.mean(total_acc))
 
-df = pd.DataFrame(total_acc)
-filename = 'P300_Result_SVM_borderline_smote.csv'
-df.to_csv(filename)
-
-df2 = pd.DataFrame(train_score)
-filename = 'P300_Result_SVM_borderline_smote_trainscore.csv'
-df2.to_csv(filename)
-
-df3 = pd.DataFrame(train_score_prob)
-filename = 'P300_Result_SVM_borderline_smote_trainscore_prob.csv'
-df3.to_csv(filename)
+# df = pd.DataFrame(total_acc)
+# filename = 'P300_Result_SVM_borderline_smote.csv'
+# df.to_csv(filename)
+#
+# df2 = pd.DataFrame(train_score)
+# filename = 'P300_Result_SVM_borderline_smote_trainscore.csv'
+# df2.to_csv(filename)

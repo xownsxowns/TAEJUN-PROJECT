@@ -14,15 +14,15 @@ colors = np.random.uniform(0,255,size=(len(classes), 3))
 
 # loading image
 img = cv2.imread("test.jpg")
-img = cv2.resize(img, None, fx=0.4, fy=0.3)
+img = cv2.resize(img, None, fx=1, fy=1)
 height, width, channels = img.shape
 
 # detecting objects
 blob = cv2.dnn.blobFromImage(img, 0.00392, (416,416), (0,0,0), True, crop=False)
 
-for b in blob:
-    for n, img_blob in enumerate(b):
-        cv2.imshow(str(n), img_blob)
+# for b in blob:
+#     for n, img_blob in enumerate(b):
+#         cv2.imshow(str(n), img_blob)
 
 net.setInput(blob)
 outs = net.forward(outputlayers)
@@ -53,6 +53,7 @@ for out in outs:
             boxes.append([x,y,w,h])
             confidences.append(float(confidence))
             class_ids.append(class_id)
+            print(classes[class_id])
 
 indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.6)
 font = cv2.FONT_HERSHEY_PLAIN
@@ -63,3 +64,9 @@ for i in range(len(boxes)):
         color = colors[i]
         cv2.rectangle(img, (x,y), (x+w,y+h), (0,0,255), 2)
         cv2.putText(img,label,(x,y+30),font,1,color,2)
+
+cv2.imshow('image', img)
+# cv2.imwrite("image_box_text.jpg",image)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()

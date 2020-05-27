@@ -274,7 +274,7 @@ for repeat_num in range(1,2):
 
     for isub in range(14):
         adasyn = SMOTE(random_state=5)
-        model_name = 'E:/[9] 졸업논문/model/oversampling/SMOTE/CNN2D/model_BS_CNN2D_smote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
+        model_name = 'E:/[9] 졸업논문/model/oversampling/SMOTE/CNN2D/model_BS_CNN2D_bsmote_t' + str(repeat_num) + '_train' + str(isub + 1) + '.h5'
         model = load_model(model_name)
 
         print(isub)

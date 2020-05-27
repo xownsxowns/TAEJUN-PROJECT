@@ -108,8 +108,9 @@ for repeat_num in range(1,2):
                 for k in range(test_data.shape[1]):
                     test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
                 test_data = np.expand_dims(test_data, axis=1)
-                predicted_class = model.predict_classes(test_data)
-                total_class.append(predicted_class[0][0])
+                predicted = model.predict(test_data)
+                predicted_class = predicted.argmax(axis=-1)
+                total_class.append(predicted_class[0])
                 if j == (data2['target'][i][0] - 1):
                     total_label.append(1)
                 else:
@@ -192,8 +193,9 @@ for repeat_num in range(1,2):
                 for k in range(test_data.shape[1]):
                     test_data[:, k, :] = scalers[k].transform(test_data[:, k, :])
                 test_data = np.expand_dims(test_data, axis=1)
-                predicted_class = model.predict_classes(test_data)
-                total_class.append(predicted_class[0][0])
+                predicted = model.predict(test_data)
+                predicted_class = predicted.argmax(axis=-1)
+                total_class.append(predicted_class[0])
                 if j == (data2['target'][i][0]-1):
                     total_label.append(1)
                 else:

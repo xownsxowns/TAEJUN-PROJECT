@@ -10,29 +10,29 @@ np.set_printoptions(precision=2)
 class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
-model = load_model('E:/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
+model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
 
-# setting video range
-start_time = 1000
-end_time = 6000
+# # setting video range
+# start_time = 0
+# end_time = 6000
 
 # video_path = 'E:/[2] 연구/[3] Facial/test_video.avi'
-video_path = 'E:/DEAP dataset/face_video/s06/s06_trial02.avi'
+video_path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/s06_trial06.avi'
 
 video_capture = cv2.VideoCapture(video_path)
-video_capture.get(cv2.CAP_PROP_FPS)
-video_capture.set(cv2.CAP_PROP_POS_MSEC, start_time)
+# video_capture.get(cv2.CAP_PROP_FPS)
+# video_capture.set(cv2.CAP_PROP_POS_MSEC, start_time)
 
 score_collect = list()
 
 ##### For FPS #####
 prevTime = 0 # for saving previous time
 
-while True:
+while(video_capture.isOpened()):
     # Capture frame-by-frame
     ret, frame = video_capture.read()
     if ret:
-        frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, None, fx=1, fy=1, interpolation=cv2.INTER_AREA)
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -70,22 +70,21 @@ while True:
             cv2.putText(frame, str(label_percen), (x, y_re), cv2.FONT_HERSHEY_SIMPLEX, 1,
                         (0, 255, 0))
         # Display the resulting frame
-        print("FPS:%0.1f" % fps)
+        # print("FPS:%0.1f" % fps)
         cv2.imshow('Video', frame)
 
-    if video_capture.get(cv2.CAP_PROP_POS_MSEC) == end_time:
-        break
+    # if video_capture.get(cv2.CAP_PROP_POS_MSEC) == end_time:
+    #     break
 
-    # if cv2.waitKey(1) & 0xFF == ord('q'):
-    #     break
-    # else:
-    #     break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    else:
+        break
 # When everything is done, release the capture
 score = np.sum(score_collect, axis=0) / np.size(score_collect, axis=0)
 score = (np.array(score)*100).tolist()
 print('Anger:{:0.2f}%, Fear:{:0.2f}%, Happy:{:0.2f}%, Neutral:{:0.2f}%, Sad:{:0.2f}%, Surprise:{:0.2f}%'.format(
     score[0],score[1],score[2],score[3],score[4],score[5]))
-print(np.shape(score))
 
 video_capture.release()
 cv2.destroyAllWindows()

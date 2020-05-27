@@ -29,7 +29,7 @@ from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from keras.regularizers import l2
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 from imblearn.under_sampling import *
 import gc
 import keras.backend as K
@@ -39,7 +39,7 @@ import keras.backend as K
 np.random.seed(0)
 random.seed(0)
 
-for repeat_num in range(1, 2):
+for repeat_num in range(1, 6):
     total_acc = list()
     train_score = list()
     for isub in range(30, 60):
@@ -118,7 +118,7 @@ for repeat_num in range(1, 2):
         LSTM_CNN.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label),
                      callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/undersampling/NCR/ConvLSTM/model_CNN_LSTM_ncr_t' + str(repeat_num) + '_train' + str(
+        model_name = '//192.168.1.181/office/[04] 연구원개인문서함/이태준/[9] 졸업논문/model/undersampling/NCR/ConvLSTM/model_CNN_LSTM_ncr_t' + str(repeat_num) + '_train' + str(
             isub + 1) + '.h5'
         LSTM_CNN.save(model_name)
 
@@ -139,6 +139,8 @@ for repeat_num in range(1, 2):
         corr_ans = 0
         ntest = np.shape(data2['ERP'])[3]
 
+        total_label = list()
+        total_class = list()
         for i in range(ntest):
             test = data2['ERP'][:, 150:, :, i]
             total_prob = list()
@@ -150,6 +152,13 @@ for repeat_num in range(1, 2):
                 test_data = np.expand_dims(test_data, axis=1)
                 prob = LSTM_CNN.predict(test_data)
                 total_prob.append(prob[0][0])
+
+                predicted_class = prob.argmax(axis=-1)
+                total_class.append(predicted_class[0])
+                if j == (data2['target'][i][0] - 1):
+                    total_label.append(1)
+                else:
+                    total_label.append(0)
             predicted_label = np.argmax(total_prob)
             if data2['target'][i][0] == (predicted_label + 1):
                 corr_ans += 1
@@ -158,6 +167,12 @@ for repeat_num in range(1, 2):
         print("Accuracy: %.2f%%" % ((corr_ans / ntest) * 100))
         print(total_acc)
         print(np.mean(total_acc))
+
+        confusion_mat = confusion_matrix(total_label, total_class)
+        df = pd.DataFrame(confusion_mat)
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/' \
+                    'ConvLSTM_ncr_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
+        df.to_csv(filename)
 
         K.clear_session()
         gc.collect()
@@ -240,7 +255,7 @@ for repeat_num in range(1, 2):
         LSTM_CNN.fit(train_data, train_label, epochs=200, batch_size=30, validation_data=(vali_data, vali_label),
                      callbacks=[early_stopping])
 
-        model_name = 'E:/[9] 졸업논문/model/undersampling/NCR/ConvLSTM/model_BS_CNN_LSTM_ncr_t' + str(
+        model_name = '//192.168.1.181/office/[04] 연구원개인문서함/이태준/[9] 졸업논문/model/undersampling/NCR/ConvLSTM/model_BS_CNN_LSTM_ncr_t' + str(
             repeat_num) + '_train' + str(isub + 1) + '.h5'
         LSTM_CNN.save(model_name)
 
@@ -261,6 +276,8 @@ for repeat_num in range(1, 2):
         corr_ans = 0
         ntest = np.shape(data2['ERP'])[3]
 
+        total_label = list()
+        total_class = list()
         for i in range(ntest):
             test = data2['ERP'][:, 150:, :, i]
             total_prob = list()
@@ -272,6 +289,13 @@ for repeat_num in range(1, 2):
                 test_data = np.expand_dims(test_data, axis=1)
                 prob = LSTM_CNN.predict(test_data)
                 total_prob.append(prob[0][0])
+
+                predicted_class = prob.argmax(axis=-1)
+                total_class.append(predicted_class[0])
+                if j == (data2['target'][i][0] - 1):
+                    total_label.append(1)
+                else:
+                    total_label.append(0)
             predicted_label = np.argmax(total_prob)
             if data2['target'][i][0] == (predicted_label + 1):
                 corr_ans += 1
@@ -280,6 +304,12 @@ for repeat_num in range(1, 2):
         print("Accuracy: %.2f%%" % ((corr_ans / ntest) * 100))
         print(total_acc)
         print(np.mean(total_acc))
+
+        confusion_mat = confusion_matrix(total_label, total_class)
+        df = pd.DataFrame(confusion_mat)
+        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/' \
+                    'ConvLSTM_BS_ncr_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
+        df.to_csv(filename)
 
         K.clear_session()
         gc.collect()

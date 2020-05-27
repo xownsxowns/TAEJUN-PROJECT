@@ -51,9 +51,8 @@ for isub in range(30,60):
     reshape_data = np.reshape(train_data, (train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
     data_res, y_res = ros.fit_resample(reshape_data, train_label)
 
-    new_train_data = train_data.reshape((train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
     clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
-    clf.fit(new_train_data, train_label)
+    clf.fit(data_res, y_res)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
@@ -127,9 +126,8 @@ for isub in range(14):
     reshape_data = np.reshape(train_data, (train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
     data_res, y_res = ros.fit_resample(reshape_data, train_label)
 
-    new_train_data = train_data.reshape((train_data.shape[0], (train_data.shape[1] * train_data.shape[2])))
     clf = SVC(probability=True, kernel='sigmoid', gamma='auto_deprecated')
-    clf.fit(new_train_data, train_label)
+    clf.fit(data_res, y_res)
 
     ## Test
     path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'

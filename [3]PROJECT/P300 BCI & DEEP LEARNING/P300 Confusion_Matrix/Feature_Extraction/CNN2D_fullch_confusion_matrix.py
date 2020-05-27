@@ -2,14 +2,7 @@ from scipy import io, signal
 import pandas as pd
 import numpy as np
 import random
-from keras import optimizers
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv3D, MaxPooling3D, BatchNormalization, Activation, AveragePooling2D
-from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from keras.regularizers import l2
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from keras.models import load_model
 import gc
@@ -253,7 +246,7 @@ for isub in range(30,60):
 
 for isub in range(14):
     print(isub)
-    model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN_2d/model_BS_CNN_2d_fullch_train' + str(
+    model_name = 'E:/[9] 졸업논문/model/feature_extraction/CNN_2d(full ch)/model_BS_CNN_2d_fullch_train' + str(
         isub + 1) + '.h5'
     model = load_model(model_name)
 
