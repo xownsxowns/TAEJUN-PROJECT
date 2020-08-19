@@ -37,9 +37,7 @@ np.random.seed(0)
 # recall = list()
 for isub in range(30,60):
     print(isub+1)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -81,8 +79,7 @@ for isub in range(30,60):
     cm = confusion_matrix(train_label, clf.predict(new_train_data))
 
     df = pd.DataFrame(cm)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
-               'P300_Result_SVM_confusion_' + str(isub + 1) + '_train.csv'
+    filename = 'P300_Result_SVM_confusion_' + str(isub + 1) + '_train.csv'
     df.to_csv(filename)
     #
     ## prob로 하지 않고 그냥 predict로 했을 때
@@ -90,7 +87,7 @@ for isub in range(30,60):
     train_score.append(training_score)
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -117,7 +114,7 @@ for isub in range(30,60):
 # BS has 6 icons
 for isub in range(14):
     print(isub+1)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -160,8 +157,7 @@ for isub in range(14):
     cm = confusion_matrix(train_label, clf.predict(new_train_data))
 
     df = pd.DataFrame(cm)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
-               'P300_Result_BS_SVM_confusion_' + str(isub + 1) + '_train.csv'
+    filename = 'P300_Result_BS_SVM_confusion_' + str(isub + 1) + '_train.csv'
     df.to_csv(filename)
 
     ## prob로 하지 않고 그냥 predict로 했을 때
@@ -170,9 +166,7 @@ for isub in range(14):
 
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub + 1) + '_EP_test.mat'
-    # path = '/Volumes/UNTITLED2/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -196,10 +190,10 @@ for isub in range(14):
     print("Accuracy: %.2f%%" % ((corr_ans/ntest)*100))
     print(total_acc)
 
-# df = pd.DataFrame(total_acc)
-# filename = 'P300_Result_NO.csv'
-# df.to_csv(filename)
-#
-# df2 = pd.DataFrame(train_score)
-# filename = 'P300_Result_no_trainscore.csv'
-# df2.to_csv(filename)
+df = pd.DataFrame(total_acc)
+filename = 'P300_Result_NO.csv'
+df.to_csv(filename)
+
+df2 = pd.DataFrame(train_score)
+filename = 'P300_Result_no_trainscore.csv'
+df2.to_csv(filename)

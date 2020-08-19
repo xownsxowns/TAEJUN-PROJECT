@@ -37,9 +37,7 @@ np.random.seed(0)
 for isub in range(30,60):
     rus = RandomUnderSampler(random_state=5)
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -105,9 +103,7 @@ for isub in range(30,60):
     train_score_prob.append((corr_train_ans/50)*100)
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN_USB/현차_기술과제데이터/Epoch/Sub' + str(isub + 1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -135,9 +131,7 @@ for isub in range(30,60):
 for isub in range(14):
     rus = RandomUnderSampler(random_state=5)
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -202,9 +196,7 @@ for isub in range(14):
             corr_train_ans += 1
     train_score_prob.append((corr_train_ans/50)*100)
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
-    # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]

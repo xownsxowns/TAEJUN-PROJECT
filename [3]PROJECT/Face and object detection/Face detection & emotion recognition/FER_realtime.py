@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 
 class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
-path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
+path = 'C:/Users/xowns/anaconda3/envs/TensorFlow/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
-model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
+model = load_model('C:/Users/xowns/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
 
 
 video_capture = cv2.VideoCapture(0)

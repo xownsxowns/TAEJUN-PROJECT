@@ -37,7 +37,7 @@ np.random.seed(0)
 for isub in range(30,60):
     sm = BorderlineSMOTE(random_state=5)
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -82,7 +82,7 @@ for isub in range(30,60):
     cm = confusion_matrix(y_res, clf.predict(data_res))
 
     df = pd.DataFrame(cm)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+    filename = 'D:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
                'P300_Result_SVM_bsmote_confusion_' + str(isub + 1) + '_train.csv'
     df.to_csv(filename)
 
@@ -91,7 +91,7 @@ for isub in range(30,60):
     train_score.append(training_score)
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
     corr_ans = 0
     ntest = np.shape(data2['ERP'])[3]
@@ -119,7 +119,7 @@ for isub in range(30,60):
 for isub in range(14):
     sm = BorderlineSMOTE(random_state=5)
     print(isub)
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_training.mat'
     data = io.loadmat(path)
 
     nch = np.shape(data['ERP'])[0]
@@ -165,7 +165,7 @@ for isub in range(14):
     cm = confusion_matrix(y_res, clf.predict(data_res))
 
     df = pd.DataFrame(cm)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+    filename = 'D:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
                'P300_Result_BS_SVM_bsmote_confusion_' + str(isub + 1) + '_train.csv'
     df.to_csv(filename)
 
@@ -174,7 +174,7 @@ for isub in range(14):
     train_score.append(training_score)
 
     ## Test
-    path = 'E:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
+    path = 'D:/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Users/Taejun/Desktop/현대실무연수자료/Epoch_BS/Sub' + str(isub+1) + '_EP_test.mat'
     # path = '/Volumes/TAEJUN/[1] Experiment/[1] BCI/P300LSTM/Epoch_data/Epoch/Sub' + str(isub+1) + '_EP_test.mat'
     data2 = io.loadmat(path)
@@ -201,10 +201,10 @@ for isub in range(14):
     print(total_acc)
     print(np.mean(total_acc))
 
-# df = pd.DataFrame(total_acc)
-# filename = 'P300_Result_SVM_borderline_smote.csv'
-# df.to_csv(filename)
-#
-# df2 = pd.DataFrame(train_score)
-# filename = 'P300_Result_SVM_borderline_smote_trainscore.csv'
-# df2.to_csv(filename)
+df = pd.DataFrame(total_acc)
+filename = 'P300_Result_SVM_borderline_smote.csv'
+df.to_csv(filename)
+
+df2 = pd.DataFrame(train_score)
+filename = 'P300_Result_SVM_borderline_smote_trainscore.csv'
+df2.to_csv(filename)
