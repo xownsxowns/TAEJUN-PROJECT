@@ -6,5 +6,4 @@ This section is related with UNIST class using Python programming. There were tw
 This section is related with my study. I refered many materials for studying data analysis, machine learning, and deep learning.
 ## [3] PROJECT
 This section is related with my project.
-## [4] Paper review
-This section contains paper reviews.
+
