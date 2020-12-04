@@ -2,7 +2,7 @@
 import mne
 from scipy import io
 
-# data = mne.io.read_raw_edf('C:/Users/jhpark/Documents/GitHub/Python_project/[2]STUDY/EEG/sub1_1_filtered.edf')
+# data = mne.io.read_raw_edf('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[2]STUDY/EEG/sub1_1_filtered.edf')
 # visual = mne.viz.plot_raw(data)
 # mne.viz.plot_topomap(data[24][1])
 #

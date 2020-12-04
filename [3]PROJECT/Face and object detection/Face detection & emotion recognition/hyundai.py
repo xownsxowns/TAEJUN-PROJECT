@@ -11,7 +11,7 @@ np.set_printoptions(precision=2)
 class_name = ['Anger', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 path = 'C:/Users/jhpark/PycharmProjects/test/venv/Lib/site-packages/cv2/data/'
 faceCascade = cv2.CascadeClassifier(path+'haarcascade_frontalface_default.xml')
-model = load_model('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
+model = load_model('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/Face and object detection/Face detection & emotion recognition/model2.h5')
 
 # # setting video range
 # start_time = 0

@@ -32,7 +32,7 @@ label_list = [0,1,2,3,4,5,6]
 #         continue
 #
 # data1 = np.asarray(img_train)
-# np.savez_compressed('C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/data1', data1=data1)
+# np.savez_compressed('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/Face and object detection/data1', data1=data1)
 
 ## 전체 데이터 npz로 한개씩 저장
 # save_path = 'E:/[2] 연구/[3] Facial/npz_data/'

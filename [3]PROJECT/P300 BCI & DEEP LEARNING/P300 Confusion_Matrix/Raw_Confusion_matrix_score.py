@@ -30,7 +30,7 @@ def calcualte_acc_score(confusion_matrix):
     acc = (TN+TP)/(FP+FN+TP+TN)
     return acc
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 #### RAW ####
 test_recall = list()
 test_precision = list()
@@ -62,7 +62,7 @@ test_acc_bsmote = list()
 
 total_sum_bsmote = np.zeros((2,2))
 for isub in range(31,60):
-    file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling' \
+    file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling' \
                '/CONFUSION/B-SMOTE/P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     test_recall_bsmote.append(calculate_recall(result))
@@ -73,7 +73,7 @@ for isub in range(31,60):
 
 #### RAW ####
 for isub in range(1, 15):
-    file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE' \
+    file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE' \
                '/P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     test_recall_bsmote.append(calculate_recall(result))

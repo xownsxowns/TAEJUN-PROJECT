@@ -9,7 +9,7 @@ from sklearn.model_selection import cross_val_score
 
 path = 'C:/Users/jhpark/Desktop/me1/delta.mat'
 data = io.loadmat(path)
-label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 
 from keras.models import Sequential
 from keras.layers import *

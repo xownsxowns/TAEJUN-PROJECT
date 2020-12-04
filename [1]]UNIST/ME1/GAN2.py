@@ -20,22 +20,22 @@ os.environ["KERAS_BACKEND"] = "tensorflow"
 np.random.seed(10)
 random_dim = 100
 ## EEG 데이터 불러오기
-# data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/ME1.mat')
-data = io.loadmat('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/ME1.mat')
+# data = io.loadmat('/Users/Taejun/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/ME1.mat')
+data = io.loadmat('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/ME1.mat')
 eeg = data['data'][:,150:,:]
 eeg = np.transpose(eeg, (1,0,2))
 n_ch = 29
 n_timepoint = 1000
 
 ## MNIST 데이터 불러오기
-# mnist_data = io.loadmat('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/data.mat')
-mnist_data = io.loadmat('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/data.mat')
+# mnist_data = io.loadmat('/Users/Taejun/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/data.mat')
+mnist_data = io.loadmat('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/data.mat')
 mnist_total = mnist_data['data'][0]
 
 
 # label 불러오기
-# label = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
-label_data = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+# label = pd.read_csv('/Users/Taejun/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+label_data = pd.read_csv('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 label_data.columns = ['label']
 label_data.head()
 

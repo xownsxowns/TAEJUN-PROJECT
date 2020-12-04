@@ -170,7 +170,7 @@ for repeat_num in range(1, 6):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
+        filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
                     'ConvLSTM_svmsmote_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
         df.to_csv(filename)
 
@@ -306,7 +306,7 @@ for repeat_num in range(1, 6):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
+        filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/' \
                    'ConvLSTM_BS_svmsmote_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
         df.to_csv(filename)
 

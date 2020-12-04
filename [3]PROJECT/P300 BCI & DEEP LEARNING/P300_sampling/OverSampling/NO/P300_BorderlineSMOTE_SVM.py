@@ -82,7 +82,7 @@ for isub in range(30,60):
     cm = confusion_matrix(y_res, clf.predict(data_res))
 
     df = pd.DataFrame(cm)
-    filename = 'D:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+    filename = 'D:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
                'P300_Result_SVM_bsmote_confusion_' + str(isub + 1) + '_train.csv'
     df.to_csv(filename)
 
@@ -165,7 +165,7 @@ for isub in range(14):
     cm = confusion_matrix(y_res, clf.predict(data_res))
 
     df = pd.DataFrame(cm)
-    filename = 'D:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+    filename = 'D:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
                'P300_Result_BS_SVM_bsmote_confusion_' + str(isub + 1) + '_train.csv'
     df.to_csv(filename)
 

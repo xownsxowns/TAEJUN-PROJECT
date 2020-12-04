@@ -11,7 +11,7 @@ from keras.callbacks import EarlyStopping
 
 path = 'C:/Users/jhpark/Desktop/me1/delta.mat'
 data = io.loadmat(path)
-label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/Python_project/[1]]UNIST/ME1/label.txt',header=None, engine='python')
+label = pd.read_csv('C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/ME1/label.txt',header=None, engine='python')
 
 re_data = np.reshape(data['delta'][:,150:,:],(500,1000,29))
 

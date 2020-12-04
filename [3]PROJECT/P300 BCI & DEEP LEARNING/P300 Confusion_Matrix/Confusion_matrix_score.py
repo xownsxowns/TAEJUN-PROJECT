@@ -23,21 +23,21 @@ def calculate_f1_score(confusion_matrix):
     return f1_score
 
 ############ DOORLOCK ###############################
-path0 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
+path0 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
 total_sum_cnn_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path0 + 'P300_Result_CNN_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_doorlock = total_sum_cnn_doorlock + result
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
 total_sum_cnn_full_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path + 'P300_Result_CNN_full_ch_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_full_doorlock = total_sum_cnn_full_doorlock + result
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
 total_sum_svm_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
@@ -45,21 +45,21 @@ for isub in range(31,46):
     total_sum_svm_doorlock = total_sum_svm_doorlock + result
 
 ############ LAMP ###############################
-path0 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
+path0 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
 total_sum_cnn_lamp = np.zeros((2,2))
 for isub in range(46,61):
     file = path0 + 'P300_Result_CNN_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_lamp = total_sum_cnn_lamp + result
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
 total_sum_cnn_full_lamp = np.zeros((2,2))
 for isub in range(46,61):
     file = path + 'P300_Result_CNN_full_ch_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_full_lamp = total_sum_cnn_full_lamp + result
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
 total_sum_svm_lamp = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
@@ -67,21 +67,21 @@ for isub in range(46,61):
     total_sum_svm_lamp = total_sum_svm_lamp + result
 
 ############ SPEAKER ###############################
-path0 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
+path0 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
 total_sum_cnn_speaker = np.zeros((2,2))
 for isub in range(1,15):
     file = path0 + 'P300_Result_CNN_BS_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_speaker = total_sum_cnn_speaker + result
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
 total_sum_cnn_full_speaker = np.zeros((2,2))
 for isub in range(1,15):
     file = path + 'P300_Result_CNN_BS_full_ch_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_full_speaker = total_sum_cnn_full_speaker + result
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
 total_sum_svm_speaker = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
@@ -89,40 +89,40 @@ for isub in range(1,15):
     total_sum_svm_speaker = total_sum_svm_speaker + result
 
 ############ TOTAL ###############################
-path0 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
+path0 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
 total_sum_cnn = np.zeros((2,2))
 for isub in range(31,61):
     file = path0 + 'P300_Result_CNN_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn = total_sum_cnn + result
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
 total_sum_cnn_full = np.zeros((2,2))
 for isub in range(31,61):
     file = path + 'P300_Result_CNN_full_ch_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_full = total_sum_cnn_full + result
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
 total_sum_svm = np.zeros((2,2))
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_svm = total_sum_svm + result
 
-path0 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
+path0 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN result/confusion matrix/'
 for isub in range(1,15):
     file = path0 + 'P300_Result_CNN_BS_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn = total_sum_cnn + result
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CNN_full ch result/confusion matrix/'
 for isub in range(1,15):
     file = path + 'P300_Result_CNN_BS_full_ch_total_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_cnn_full = total_sum_cnn_full + result
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/NO result/confusion matrix/'
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)

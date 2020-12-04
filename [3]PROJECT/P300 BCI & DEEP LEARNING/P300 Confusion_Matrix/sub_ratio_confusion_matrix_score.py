@@ -36,7 +36,7 @@ train_raw_precision = list()
 train_raw_f1 = list()
 train_raw_acc = list()
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -66,7 +66,7 @@ train_ratio0_recall = list()
 train_ratio0_precision = list()
 train_ratio0_f1 = list()
 train_ratio0_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio0_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -96,7 +96,7 @@ train_ratio1_recall = list()
 train_ratio1_precision = list()
 train_ratio1_f1 = list()
 train_ratio1_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio1_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -126,7 +126,7 @@ train_ratio2_recall = list()
 train_ratio2_precision = list()
 train_ratio2_f1 = list()
 train_ratio2_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio2_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -156,7 +156,7 @@ train_ratio3_recall = list()
 train_ratio3_precision = list()
 train_ratio3_f1 = list()
 train_ratio3_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio3_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -186,7 +186,7 @@ train_ratio4_recall = list()
 train_ratio4_precision = list()
 train_ratio4_f1 = list()
 train_ratio4_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio4_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -216,7 +216,7 @@ train_ratio5_recall = list()
 train_ratio5_precision = list()
 train_ratio5_f1 = list()
 train_ratio5_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio5_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -246,7 +246,7 @@ train_ratio6_recall = list()
 train_ratio6_precision = list()
 train_ratio6_f1 = list()
 train_ratio6_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio6_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -276,7 +276,7 @@ train_ratio7_recall = list()
 train_ratio7_precision = list()
 train_ratio7_f1 = list()
 train_ratio7_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio7_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -306,7 +306,7 @@ train_ratio8_recall = list()
 train_ratio8_precision = list()
 train_ratio8_f1 = list()
 train_ratio8_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio8_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -336,7 +336,7 @@ train_bs_recall = list()
 train_bs_precision = list()
 train_bs_f1 = list()
 train_bs_acc = list()
-path2= 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
+path2= 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -401,7 +401,7 @@ test_raw_precision = list()
 test_raw_f1 = list()
 test_raw_acc = list()
 
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -431,7 +431,7 @@ test_ratio0_recall = list()
 test_ratio0_precision = list()
 test_ratio0_f1 = list()
 test_ratio0_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio0_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -461,7 +461,7 @@ test_ratio1_recall = list()
 test_ratio1_precision = list()
 test_ratio1_f1 = list()
 test_ratio1_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio1_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -491,7 +491,7 @@ test_ratio2_recall = list()
 test_ratio2_precision = list()
 test_ratio2_f1 = list()
 test_ratio2_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio2_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -521,7 +521,7 @@ test_ratio3_recall = list()
 test_ratio3_precision = list()
 test_ratio3_f1 = list()
 test_ratio3_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio3_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -551,7 +551,7 @@ test_ratio4_recall = list()
 test_ratio4_precision = list()
 test_ratio4_f1 = list()
 test_ratio4_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio4_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -581,7 +581,7 @@ test_ratio5_recall = list()
 test_ratio5_precision = list()
 test_ratio5_f1 = list()
 test_ratio5_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio5_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -611,7 +611,7 @@ test_ratio6_recall = list()
 test_ratio6_precision = list()
 test_ratio6_f1 = list()
 test_ratio6_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio6_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -641,7 +641,7 @@ test_ratio7_recall = list()
 test_ratio7_precision = list()
 test_ratio7_f1 = list()
 test_ratio7_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio7_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -671,7 +671,7 @@ test_ratio8_recall = list()
 test_ratio8_precision = list()
 test_ratio8_f1 = list()
 test_ratio8_acc = list()
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio8_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -701,7 +701,7 @@ test_bs_recall = list()
 test_bs_precision = list()
 test_bs_f1 = list()
 test_bs_acc = list()
-path2= 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
+path2= 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -744,27 +744,27 @@ test_acc = np.concatenate([np.reshape(test_raw_acc,(44,1)), np.reshape(test_rati
                                np.reshape(test_ratio8_acc,(44,1)),np.reshape(test_bs_acc,(44,1))],axis=1)
 
 
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/SVM result/P300_Result_NO.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/SVM result/P300_Result_NO.csv'
 raw_result = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio0.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio0.csv'
 ratio0 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio1.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio1.csv'
 ratio1 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio2.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio2.csv'
 ratio2 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio3.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio3.csv'
 ratio3 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio4.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio4.csv'
 ratio4 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio5.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio5.csv'
 ratio5 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio6.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio6.csv'
 ratio6 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio7.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio7.csv'
 ratio7 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio8.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/NO/ratio_result/P300_Result_SVM_borderline_smote_ratio8.csv'
 ratio8 = pd.read_csv(file, header=0, index_col=0)
-file = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CNN Full ch & NO result/B-SMOTE/P300_Result_SVM_borderline_smote.csv'
+file = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CNN Full ch & NO result/B-SMOTE/P300_Result_SVM_borderline_smote.csv'
 bs_result = pd.read_csv(file, header=0, index_col=0)
 
 bci_acc = np.concatenate([raw_result, ratio0, ratio1, ratio2, ratio3, ratio4, ratio5, ratio6, ratio7, ratio8, bs_result],axis=1)

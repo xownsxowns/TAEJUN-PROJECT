@@ -24,56 +24,56 @@ def calculate_f1_score(confusion_matrix):
 
 ############ DOORLOCK ###############################
 # ROS
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/'
 total_sum_ros_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_ros_doorlock = total_sum_ros_doorlock + result
 # SMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE/'
 total_sum_smote_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_smote_doorlock = total_sum_smote_doorlock + result
 # B-SMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
 total_sum_bsmote_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_bsmote_doorlock = total_sum_bsmote_doorlock + result
 # SVMSMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/'
 total_sum_svmsmote_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_svmsmote_doorlock = total_sum_svmsmote_doorlock + result
 # ADASYN
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ADASYN/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ADASYN/'
 total_sum_adasyn_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_adasyn_doorlock = total_sum_adasyn_doorlock + result
 # RUS
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/RUS/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/RUS/'
 total_sum_rus_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_rus_doorlock = total_sum_rus_doorlock + result
 # NCR
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/'
 total_sum_ncr_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_ncr_doorlock = total_sum_ncr_doorlock + result
 # Tomek
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek/'
 total_sum_tomek_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
@@ -82,56 +82,56 @@ for isub in range(31,46):
 
 ######## EL ##############
 # ROS
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/'
 total_sum_ros_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_ros_light = total_sum_ros_light + result
 # SMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE/'
 total_sum_smote_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_smote_light = total_sum_smote_light + result
 # B-SMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
 total_sum_bsmote_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_bsmote_light = total_sum_bsmote_light + result
 # SVMSMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/'
 total_sum_svmsmote_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_svmsmote_light = total_sum_svmsmote_light + result
 # ADASYN
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ADASYN/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ADASYN/'
 total_sum_adasyn_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_adasyn_light = total_sum_adasyn_light + result
 # RUS
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/RUS/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/RUS/'
 total_sum_rus_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_rus_light = total_sum_rus_light + result
 # NCR
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/'
 total_sum_ncr_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_ncr_light = total_sum_ncr_light + result
 # Tomek
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek/'
 total_sum_tomek_light = np.zeros((2,2))
 for isub in range(46,61):
     file = path2 + 'P300_Result_SVM_confusion_' + str(isub) + '.csv'
@@ -140,56 +140,56 @@ for isub in range(46,61):
 
 ################## BS #############
 # ROS
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ROS/'
 total_sum_ros_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_ros_bs = total_sum_ros_bs + result
 # SMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SMOTE/'
 total_sum_smote_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_smote_bs = total_sum_smote_bs + result
 # B-SMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/B-SMOTE/'
 total_sum_bsmote_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_bsmote_bs = total_sum_bsmote_bs + result
 # SVMSMOTE
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/SVMSMOTE/'
 total_sum_svmsmote_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_svmsmote_bs = total_sum_svmsmote_bs + result
 # ADASYN
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ADASYN/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/OverSampling/CONFUSION/ADASYN/'
 total_sum_adasyn_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_adasyn_bs = total_sum_adasyn_bs + result
 # RUS
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/RUS/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/RUS/'
 total_sum_rus_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_rus_bs = total_sum_rus_bs + result
 # NCR
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/'
 total_sum_ncr_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
     total_sum_ncr_bs = total_sum_ncr_bs + result
 # Tomek
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek/'
 total_sum_tomek_bs = np.zeros((2,2))
 for isub in range(1,15):
     file = path2 + 'P300_Result_SVM_BS_confusion_' + str(isub) + '.csv'

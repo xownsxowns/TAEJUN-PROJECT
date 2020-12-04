@@ -25,7 +25,7 @@ def calculate_f1_score(confusion_matrix):
 ######################## Train ###########################
 #### ratio0
 total_sum_ratio0 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio0' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -38,7 +38,7 @@ for isub in range(1,15):
 
 #### ratio1
 total_sum_ratio1 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio1' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -51,7 +51,7 @@ for isub in range(1,15):
 
 #### ratio2
 total_sum_ratio2 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio2' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -64,7 +64,7 @@ for isub in range(1,15):
 
 #### ratio3
 total_sum_ratio3 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio3' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -77,7 +77,7 @@ for isub in range(1,15):
 
 #### ratio4
 total_sum_ratio4 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio4' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -90,7 +90,7 @@ for isub in range(1,15):
 
 #### ratio5
 total_sum_ratio5 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio5' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -103,7 +103,7 @@ for isub in range(1,15):
 
 #### ratio6
 total_sum_ratio6 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio6' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -116,7 +116,7 @@ for isub in range(1,15):
 
 #### ratio7
 total_sum_ratio7 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio7' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -129,7 +129,7 @@ for isub in range(1,15):
 
 #### ratio8
 total_sum_ratio8 = np.zeros((2,2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31,61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio8' + '_confusion_' + str(isub) + '_train.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -143,7 +143,7 @@ for isub in range(1,15):
 ######################## Test ###########################
 #### ratio0
 total_sum_ratio0_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio0' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -156,7 +156,7 @@ for isub in range(1, 15):
 
 #### ratio1
 total_sum_ratio1_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio1' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -169,7 +169,7 @@ for isub in range(1, 15):
 
 #### ratio2
 total_sum_ratio2_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio2' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -182,7 +182,7 @@ for isub in range(1, 15):
 
 #### ratio3
 total_sum_ratio3_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio3' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -195,7 +195,7 @@ for isub in range(1, 15):
 
 #### ratio4
 total_sum_ratio4_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio4' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -208,7 +208,7 @@ for isub in range(1, 15):
 
 #### ratio5
 total_sum_ratio5_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio5' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -221,7 +221,7 @@ for isub in range(1, 15):
 
 #### ratio6
 total_sum_ratio6_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio6' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -234,7 +234,7 @@ for isub in range(1, 15):
 
 #### ratio7
 total_sum_ratio7_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio7' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)
@@ -247,7 +247,7 @@ for isub in range(1, 15):
 
 #### ratio8
 total_sum_ratio8_t = np.zeros((2, 2))
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 for isub in range(31, 61):
     file = path2 + 'P300_Result_SVM_bsmote_ratio8' + '_confusion_' + str(isub) + '.csv'
     result = pd.read_csv(file, header=0, index_col=0)

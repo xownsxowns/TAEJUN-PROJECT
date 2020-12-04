@@ -41,8 +41,8 @@ np.random.seed(0)
 random.seed(0)
 
 def convert_to_2d_doorlock_light(sub_num, input):
-    ch_path1 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_doorlock'
-    ch_path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_light'
+    ch_path1 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_doorlock'
+    ch_path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_light'
     ch_data1 = io.loadmat(ch_path1)
     ch_data2 = io.loadmat(ch_path2)
     ch_list  = []
@@ -120,7 +120,7 @@ def convert_to_2d_doorlock_light(sub_num, input):
     return mapp
 
 def convert_to_2d_bs(sub_num, input):
-    ch_path1 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_bs'
+    ch_path1 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/ch/chlist_bs'
     ch_data1 = io.loadmat(ch_path1)
     ch_list  = []
     for i in range(len(ch_data1['chlist_bs'][0])):
@@ -264,7 +264,7 @@ for repeat_num in range(1,2):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/' \
+        filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/' \
                    'CNN2D_ncr_t' + str(repeat_num) + '_confusion_' + str(isub+1) + '.csv'
         df.to_csv(filename)
 
@@ -337,7 +337,7 @@ for repeat_num in range(1,2):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/' \
+        filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/NCR/' \
                    'CNN2D_BS_ncr_t' + str(repeat_num) + '_confusion_' + str(isub + 1) + '.csv'
         df.to_csv(filename)
 

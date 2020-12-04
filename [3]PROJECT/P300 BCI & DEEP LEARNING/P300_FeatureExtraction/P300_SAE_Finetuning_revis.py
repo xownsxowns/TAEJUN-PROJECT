@@ -158,7 +158,7 @@ for repeat_num in range(1,6):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+        filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
                    '/P300_Result_SAE_confusion_' + str(isub + 1) + '_t' + str(repeat_num) +  '.csv'
         df.to_csv(filename)
 
@@ -290,7 +290,7 @@ for repeat_num in range(1,6):
 
         confusion_mat = confusion_matrix(total_label, total_class)
         df = pd.DataFrame(confusion_mat)
-        filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
+        filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/' \
                    '/P300_Result_BS_SAE_confusion_' + str(isub + 1) + '_t' + str(repeat_num) +  '.csv'
         df.to_csv(filename)
 

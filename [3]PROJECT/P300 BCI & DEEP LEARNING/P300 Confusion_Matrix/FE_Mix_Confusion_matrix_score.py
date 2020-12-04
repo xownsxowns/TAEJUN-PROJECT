@@ -22,7 +22,7 @@ def calculate_f1_score(confusion_matrix):
     f1_score = 2 * ((precision*recall) / (precision+recall))
     return f1_score
 
-path = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
+path = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_FeatureExtraction/CONFUSION/'
 ############ DOORLOCK ###############################
 total_sum_raw_cnn_doorlock = np.zeros((2,2))
 for isub in range(31,46):

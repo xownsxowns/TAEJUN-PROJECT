@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('/Users/Taejun/Documents/GitHub/Python_project/[1]]UNIST/Multivariate analysis/day.csv')
+df = pd.read_csv('/Users/Taejun/Documents/GitHub/TAEJUN PROJECT/[1]]UNIST/Multivariate analysis/day.csv')
 
 def generate_dummies(df, dummy_column):
     dummies = pd.get_dummies(df[dummy_column], prefix=dummy_column)

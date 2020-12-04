@@ -162,7 +162,7 @@ for isub in range(30,60):
 
     confusion_mat = confusion_matrix(total_label, total_class)
     df = pd.DataFrame(confusion_mat)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling' \
+    filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling' \
                '/CONFUSION/Tomek/RAW_confusion_' + str(isub+1) + '.csv'
     df.to_csv(filename)
 
@@ -294,6 +294,6 @@ for isub in range(14):
 
     confusion_mat = confusion_matrix(total_label, total_class)
     df = pd.DataFrame(confusion_mat)
-    filename = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek' \
+    filename = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_sampling/UnderSampling/CONFUSION/Tomek' \
                '/RAW_BS_confusion_' + str(isub + 1) + '.csv'
     df.to_csv(filename)

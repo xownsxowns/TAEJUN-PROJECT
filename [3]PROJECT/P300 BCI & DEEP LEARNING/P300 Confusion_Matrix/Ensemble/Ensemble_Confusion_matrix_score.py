@@ -23,7 +23,7 @@ def calculate_f1_score(confusion_matrix):
     return f1_score
 
 ############ DOORLOCK ###############################
-path2 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_Ensemble/confusion matrix/'
+path2 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/P300 BCI & DEEP LEARNING/P300_Ensemble/confusion matrix/'
 total_sum_svm_doorlock = np.zeros((2,2))
 for isub in range(31,46):
     file = path2 + 'P300_Result_SVM_ensemble_confusion_' + str(isub) + '.csv'

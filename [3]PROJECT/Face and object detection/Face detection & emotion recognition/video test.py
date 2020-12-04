@@ -1,6 +1,6 @@
 import cv2
 
-videoFile1 = 'C:/Users/jhpark/Documents/GitHub/Python_project/[3]PROJECT/Face and object detection/Face detection & emotion recognition/s06_trial06.avi'
+videoFile1 = 'C:/Users/jhpark/Documents/GitHub/TAEJUN PROJECT/[3]PROJECT/Face and object detection/Face detection & emotion recognition/s06_trial06.avi'
 cap = cv2.VideoCapture(videoFile1)
 
 while(cap.isOpened()):
