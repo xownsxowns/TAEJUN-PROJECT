@@ -51,10 +51,6 @@ for detection in output[0, 0, :, :]:
         cv2.rectangle(image, (int(box_x), int(box_y)), (int(box_width), int(box_height)), (23, 230, 210), thickness=2)
         cv2.putText(image,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,1,(0, 255, 0))
 
-
-
-
-
 cv2.imshow('image', image)
 # cv2.imwrite("image_box_text.jpg",image)
 

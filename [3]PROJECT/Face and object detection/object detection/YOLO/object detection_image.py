@@ -37,8 +37,8 @@ for out in outs:
         scores = detection[5:]
         class_id = np.argmax(scores)
         confidence = scores[class_id]
-        if confidence > 0.5:
-            # onject detected
+        if confidence > 0.6:
+            # object detected
             center_x = int(detection[0]*width)
             center_y = int(detection[1]*height)
             w = int(detection[2]*width)
