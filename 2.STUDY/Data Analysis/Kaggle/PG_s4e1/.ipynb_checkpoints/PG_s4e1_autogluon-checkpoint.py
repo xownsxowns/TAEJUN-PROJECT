@@ -54,7 +54,7 @@ data_submit = pd.read_csv('/Volumes/TAEJUN/[0] Study/[9] 데이터ᄇ�
 data_submit.Exited = prediction[1]
 data_submit[['id', 'Exited']].to_csv('PG_s4e1_autogluon.csv', index=False)
 
-"""
-Fitting model: WeightedEnsemble_L3 ... Training model for up to 360.0s of the 0.42s of remaining time.
-Ensemble Weights: {'LightGBM_BAG_L2': 0.579, 'LightGBMXT_BAG_L2': 0.263, 'RandomForestGini_BAG_L2': 0.158}
-"""
+    """
+    Fitting model: WeightedEnsemble_L3 ... Training model for up to 360.0s of the 0.42s of remaining time.
+	Ensemble Weights: {'LightGBM_BAG_L2': 0.579, 'LightGBMXT_BAG_L2': 0.263, 'RandomForestGini_BAG_L2': 0.158}
+    """
