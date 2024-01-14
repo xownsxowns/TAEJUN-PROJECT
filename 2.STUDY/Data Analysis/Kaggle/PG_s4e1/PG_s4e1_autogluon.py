@@ -7,15 +7,12 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, Ro
 from sklearn.impute import SimpleImputer
 
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier, ExtraTreesClassifier
-from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
-from catboost import CatBoostClassifier, Pool
 from autogluon.tabular import TabularDataset, TabularPredictor
 pd.DataFrame.iteritems = pd.DataFrame.items
 
-train = pd.read_csv('E:/[0] Study/[9] 데이터분석/playground-series-s4e1/train.csv')
-test = pd.read_csv('E:/[0] Study/[9] 데이터분석/playground-series-s4e1/test.csv')
-origin = pd.read_csv('E:/[0] Study/[9] 데이터분석/playground-series-s4e1/Churn_Modelling.csv')
+train = pd.read_csv('/Volumes/TAEJUN/[0] Study/[9] 데이터분석/playground-series-s4e1/train.csv')
+test = pd.read_csv('/Volumes/TAEJUN/[0] Study/[9] 데이터분석/playground-series-s4e1/test.csv')
+origin = pd.read_csv('/Volumes/TAEJUN/[0] Study/[9] 데이터분석/playground-series-s4e1/Churn_Modelling.csv')
 train = pd.concat([train.drop(["id", "Surname"], axis=1), origin.drop(["RowNumber", "Surname"], axis=1)], ignore_index=True)
 test.drop(["id", "Surname"], axis=1, inplace=True)
 
@@ -53,6 +50,11 @@ automl.leaderboard()
 
 prediction = automl.predict_proba(test)
 
-data_submit = pd.read_csv('E:\[0] Study\[9] 데이터분석\playground-series-s4e1\sample_submission.csv')
+data_submit = pd.read_csv('/Volumes/TAEJUN/[0] Study/[9] 데이터분석/playground-series-s4e1/sample_submission.csv')
 data_submit.Exited = prediction[1]
 data_submit[['id', 'Exited']].to_csv('PG_s4e1_autogluon.csv', index=False)
+
+    """
+    Fitting model: WeightedEnsemble_L3 ... Training model for up to 360.0s of the 0.42s of remaining time.
+	Ensemble Weights: {'LightGBM_BAG_L2': 0.579, 'LightGBMXT_BAG_L2': 0.263, 'RandomForestGini_BAG_L2': 0.158}
+    """
